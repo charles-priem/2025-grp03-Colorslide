@@ -11,14 +11,16 @@
     <header>
         <a href="#"><img src="#"></a>
         <nav>
-            <a href="#home" class="linkanimation">Accueil</a>
-            <a href="#about" class="linkanimation">Tutoriel</a>
-            <a href="#connexion" class="linkanimation">Connexion</a>
+            <a href="#home" class="linkanimation">Index</a>
+            <a href="#about" class="linkanimation">Leaderboard</a>
+            <a href="#connexion" class="linkanimation">Sign in</a>
             <script src="script.js"></script>
         </nav>
     </header>
-    <main>
-
+    <main id="index">
+        <div>
+            <button>Get Started</button>
+        </div>
     </main>
     <footer>
         <div class="container">

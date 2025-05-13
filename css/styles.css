@@ -20,8 +20,17 @@
 }
 
 :root{
-    --blue-background: #00123a;
+    --blue-background: #000e2c;
     --text-color: #ccc;
+    --m: 4rem;
+  
+  --red: #FF6565;
+  --pink: #FF64F9;
+  --purple: #6B5FFF;
+  --blue: #4D8AFF;
+  --green: #5BFF89;
+  --yellow: #FFEE55;
+  --orange: #FF6D1B;
 }
 
 body{
@@ -29,7 +38,10 @@ body{
 }
 
 main{
-    min-height: 100vh;
+    min-height: calc(100vh - 60px);
+    position:relative;
+    overflow: hidden;
+    margin-top:60px;
 }
 
 nav {
@@ -40,6 +52,7 @@ nav {
 }
 
 header{
+    max-height: 60px;
     position:fixed;
     top: 0;
     left: 0;
@@ -50,6 +63,8 @@ header{
     align-items: center;
     z-index:100;
     font-family: 'Space Grotesk';
+    color: var(--blue-background);
+    opacity:50
 }
 
 nav a{
@@ -105,6 +120,66 @@ nav a{
     transform: translateX(-100%) scalex(0);
   }
 }
+
+#index button {
+  margin-bottom:60px;
+  border: calc(0.08 * var(--m)) solid transparent;
+  position: relative;
+  color: #F3F3F3;
+  font-family: 'Space Grotesk';
+  font-size: var(--m);
+  border-radius: calc(0.7 * var(--m));
+  padding: calc(0.5 * var(--m)) calc(1 * var(--m));
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  
+  background:linear-gradient(#121213, #121213), linear-gradient(#121213 50%, rgba(18, 18, 19, 0.6) 80%, rgba(18, 18, 19, 0)),  linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
+  background-origin: border-box;
+  background-clip: padding-box, border-box, border-box;
+  background-size: 200%;
+  animation: animate 2s infinite linear;
+  transition: transform 0.3s ease-in-out;
+}
+
+#index button::before {
+  content: '';
+  z-index: -1;
+  background: linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
+  height: 30%;
+  width: 60%;
+  position: absolute;
+  bottom: -20%;
+  background-size: 200%;
+  animation: animate 2s infinite linear;
+  filter: blur(calc(0.8 * var(--m)));
+}
+
+#index button:hover{
+  transform: scale(1.05);
+}
+
+#index button:hover, #index button:hover::before {
+  animation: animate 0.5s infinite linear;
+}
+
+@keyframes animate {
+  0% {background-position: 0; }
+  100% {background-position: 200%}
+}
+
+@media screen and (max-width: 1000px) {
+  :root {
+    --m: 2rem;
+  }
+}
+
+#index{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 footer{
   position: relative; 
