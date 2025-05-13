@@ -1,0 +1,118 @@
+/* <?php
+
+    $theme = "dark";
+    :root{
+        --blue-background: #001952;
+        --text-color: #ccc;
+    }
+?>
+*/
+
+@import url('https://fonts.googleapis.com/css?family=Space%20Grotesk:700|Space%20Grotesk:400');
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: white;;
+}
+
+:root{
+    --blue-background: #00123a;
+    --text-color: #ccc;
+}
+
+body{
+    background-color: var(--blue-background);
+}
+
+main{
+    min-height: 100vh;
+}
+
+nav {
+    margin-left: auto; 
+    text-decoration: none;
+    list-style: none;
+    width:auto;
+}
+
+header{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index:100;
+    font-family: 'Space Grotesk';
+}
+
+nav a{
+    margin-left:2em;
+}
+
+.linkanimation {
+  text-decoration: none;
+  text-decoration-color: none;
+  color: white;
+  position: relative;
+}
+.linkanimation::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 1px;
+  background-color: #FEFEFE;
+  transform: scale(1,1);
+  transition: background-color .5s ease-in-out;
+  bottom: 0px;
+  transform: translateX(-100%) scalex(0);
+}
+
+.linkanimation:not(.animation-ready)::before {
+  animation: none !important;
+}
+
+.linkanimation.animation-ready:not(:hover)::before {
+  animation: link-disappear ease-in-out forwards 0.4s 1;
+  transform-origin: right;
+}
+
+.linkanimation:hover::before {
+  animation: link-appear ease-in-out forwards 0.4s 1 200ms;
+  transform-origin: right; 
+}
+
+@keyframes link-appear {
+   0%{
+    transform: translateX(-100%) scalex(0);
+  }
+   100%{
+    transform: translateX(-100%) scalex(-1);
+  }
+}
+
+@keyframes link-disappear {
+  0%{
+    transform: translateX(-100%) scalex(-1);
+  }
+  100%{
+    transform: translateX(-100%) scalex(0);
+  }
+}
+
+footer{
+  position: relative; 
+  width: 100%;
+  height:auto;
+  padding: 50px 100px;
+  background: #111;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
