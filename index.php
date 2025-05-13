@@ -27,32 +27,31 @@
             <h1>Game mechanics</h1>
         </div>
         <div class="card-container">
-            <div class="card">
-                <h2>Card 1</h2>
+            <div class="card-wrapper">
+                <div class="card">
+                    <h2>Card 1</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
+            </div>  
+            <div class="card-wrapper">
+                <div class="card">
+                    <h2>Card 2</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
             </div>
-            <div class="card">
-                <h2>Card 2</h2>
-            </div>
-            <div class="card">
-                <h2>Card 3</h2>
+            <div class="card-wrapper">
+                <div class="card">
+                    <h2>Card 3</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
             </div>
         </div>
     </main>
     <footer>
         <div class="container">
-            <div class="a_propos_de_nous">
-                <h2>A propos de nous</h2>
-                <p>blanbâonvoa^qvbrâiv câeb 
-                    vv^qar^IOEARGÄER 
-                    *GJZPR ITZcregrt</p>
-            </div>
-        <ul class="sci">
-            <li><a href="#"> <i class="fa fa-envelope-o" aria-hidden="true"></i></a></li>
-</ul>
-            <div class="Nous_contacter">
-                <h2>Nous contacter</h2>
+            <h2>Contact</h2>
+        </div>
 
-</div>
     </footer>
 </body>
 </html>

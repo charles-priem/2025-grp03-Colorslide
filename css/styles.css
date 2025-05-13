@@ -43,12 +43,19 @@ body{
 }
 
 main{
-    min-height: calc(100vh - 60px);
+    min-height: 100vh;
     position:relative;
     overflow: hidden;
-    margin-top:60px;
-}
-
+    background-image: 
+    radial-gradient(at 30% 70%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
+    radial-gradient(at 90% 40%, rgba(107, 37, 104, 0.6) 0, transparent 50%),
+    radial-gradient(at 85% 85%, #9e4663b0 0, rgba(212, 115, 180, 0.3) 50%),
+    radial-gradient(at 60% 90%, rgba(20, 40, 80, 0.7) 0, transparent 50%),
+    radial-gradient(at 20% 90%, #051c3f 0, transparent 50%),
+    radial-gradient(at 75% 10%, #102840 0, transparent 50%),
+    radial-gradient(at 10% 20%, rgba(70, 18, 65, 0.8) 0, transparent 50%);
+  }
 nav {
     margin-left: auto; 
     text-decoration: none;
@@ -103,7 +110,7 @@ nav a{
 }
 
 .linkanimation:hover::before {
-  animation: link-appear ease-in-out forwards 0.4s 1 200ms;
+  animation: link-appear ease-in-out forwards 0.4s 1 100ms;
   transform-origin: right; 
 }
 
@@ -193,48 +200,114 @@ nav a{
   }
 }
 
-#index div:first-child{
+#index > div:first-child{
   grid-row: 1/2;
   grid-column: 1/4;
   display: flex;
   position: relative;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  z-index: 0;
   height: calc(100vh - 60px);
+  /* background-image: radial-gradient(at center, transparent 48%, #2a0535); */
 }
 
-#index div:nth-child(2){
+#index > div:nth-child(2){
   grid-row: 2/3;
   grid-column: 1/4;
   padding-top:5em;
-  padding-bottom:2em;
+  padding-bottom:5em;
   text-align: center;
   margin-inline:auto;
   font-family: 'Space Grotesk';
 }
 
-#index div:nth-child(3){
-  grid-row: 2/3;
+#index .card-container{
+  grid-row: 3/4;
   grid-column: 1/4;
   display:flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  z-index:0;
+  position: relative;
+  padding-bottom:5em;
 }
 
 #index .card:first-of-type{
   grid-row: 3/4;
   grid-column: 1/2;
-  min-height: calc(100vh - 60px);
 }
 
-#index .card:first-of-type(2){
+#index .card:nth-of-type(2){
   grid-row: 3/4;
   grid-column: 2/3;
 }
 
-#index .card-container:nth-child(3){
+#index .card:nth-of-type(3){
   grid-row: 3/4;
   grid-column: 3/4;
+}
+
+#index .card{
+  z-index:2;
+  margin: 0 auto;
+  padding: 2em;
+  width: 400px;
+  background: #1c1f2b;
+  text-align: center;
+  border-radius: 10px;
+  position:relative;
+  overflow: hidden;
+}
+
+#index .card{
+  font-family: 'Space Grotesk';
+}
+
+#index .card h2{
+
+}
+
+.card-wrapper {
+  position: relative;
+  display: inline-block;
+  transform: translateZ(0);
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value:0deg;
+  inherits: false;
+}
+
+#index .card-wrapper::after, #index .card-wrapper::before {
+  z-index:-1;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background:red;
+  top:50%;
+  left:50%;
+  padding:3px;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(from var(--angle), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
+  border-radius: 10px;
+  animation: 3s spin linear infinite;
+}
+
+#index .card-wrapper::before {
+  filter: blur(1.5rem);
+  opacity: 0.5;
+
+}
+
+@keyframes spin {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
 }
 
 #index{
@@ -247,28 +320,31 @@ nav a{
   position: fixed;
   top: 0;
   left: 0;
-  width: 150px; /* Taille du halo */
-  height: 150px; /* Taille du halo */
+  width: 300px; /* Taille du halo */
+  height: 300px; /* Taille du halo */
   border-radius: 50%; /* Forme circulaire */
   background: linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   background-size: 200%;
   animation: animate 2s infinite linear; /* Animation identique au bouton */
-  filter: blur(150px); /* Effet de flou pour le halo */
+  filter: blur(140px); /* Effet de flou pour le halo */
   pointer-events: none; /* Empêche le curseur d'interagir avec les éléments */
-  z-index: 1; /* Toujours au-dessus des autres éléments */
+  z-index: 0; /* Toujours au-dessus des autres éléments */
   transform: translate(-50%, -50%); /* Centre le halo sur la position de la souris */
 }
 
 footer{
-  position: relative; 
+  margin-top:-60px;
+  max-height: 60px;
+  top: 0;
+  left: 0;
   width: 100%;
-  height:auto;
-  padding: 50px 100px;
-  background: #111;
+  padding: 20px 8%;
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
-  z-index:2;
+  align-items: center;
+  z-index:100;
+  font-family: 'Space Grotesk';
+  backdrop-filter: blur(3px);
 }
 
 
