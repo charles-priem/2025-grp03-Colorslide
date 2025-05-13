@@ -16,13 +16,18 @@
     padding: 0;
     box-sizing: border-box;
     text-decoration: none;
-    color: white;;
+    color: white;
+}
+h1{
+    font-family: 'Space Grotesk';
+    font-size: 2.5rem;
+    text-align: center;
 }
 
 :root{
     --blue-background: #000e2c;
     --text-color: #ccc;
-    --m: 4rem;
+    --m: 3rem;
   
   --red: #FF6565;
   --pink: #FF64F9;
@@ -63,8 +68,7 @@ header{
     align-items: center;
     z-index:100;
     font-family: 'Space Grotesk';
-    color: var(--blue-background);
-    opacity:50
+    backdrop-filter: blur(3px);
 }
 
 nav a{
@@ -123,7 +127,7 @@ nav a{
 
 #index button {
   margin-bottom:60px;
-  border: calc(0.08 * var(--m)) solid transparent;
+  border: calc(0.09 * var(--m)) solid transparent;
   position: relative;
   color: #F3F3F3;
   font-family: 'Space Grotesk';
@@ -133,6 +137,7 @@ nav a{
   display: flex;
   justify-content: center;
   cursor: pointer;
+  overflow: hidden;
   
   background:linear-gradient(#121213, #121213), linear-gradient(#121213 50%, rgba(18, 18, 19, 0.6) 80%, rgba(18, 18, 19, 0)),  linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   background-origin: border-box;
@@ -144,19 +149,33 @@ nav a{
 
 #index button::before {
   content: '';
-  z-index: -1;
+  z-index: 0;
   background: linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   height: 30%;
-  width: 60%;
+  width: 80%;
   position: absolute;
-  bottom: -20%;
+  bottom: -60%;
   background-size: 200%;
   animation: animate 2s infinite linear;
   filter: blur(calc(0.8 * var(--m)));
 }
 
-#index button:hover{
-  transform: scale(1.05);
+#index div:first-child a img{
+  width:50px;
+  position: absolute;
+  bottom: 1em;
+  left: 50%;
+  animation: bounce 1.5s infinite ease-in-out; /* Animation infinie */
+  cursor:pointer;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) scaleY(-1) translateY(0); /* Position initiale avec miroir */
+  }
+  50% {
+    transform: translate(-50%, -50%) scaleY(-1) translateY(-10px); /* Déplacement vers le haut */
+  }
 }
 
 #index button:hover, #index button:hover::before {
@@ -168,18 +187,77 @@ nav a{
   100% {background-position: 200%}
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 600px) {
   :root {
     --m: 2rem;
   }
 }
 
-#index{
+#index div:first-child{
+  grid-row: 1/2;
+  grid-column: 1/4;
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
+  z-index: 2;
+  height: calc(100vh - 60px);
 }
 
+#index div:nth-child(2){
+  grid-row: 2/3;
+  grid-column: 1/4;
+  padding-top:5em;
+  padding-bottom:2em;
+  text-align: center;
+  margin-inline:auto;
+  font-family: 'Space Grotesk';
+}
+
+#index div:nth-child(3){
+  grid-row: 2/3;
+  grid-column: 1/4;
+  display:flex;
+  justify-content: space-between;
+}
+
+#index .card:first-of-type{
+  grid-row: 3/4;
+  grid-column: 1/2;
+  min-height: calc(100vh - 60px);
+}
+
+#index .card:first-of-type(2){
+  grid-row: 3/4;
+  grid-column: 2/3;
+}
+
+#index .card-container:nth-child(3){
+  grid-row: 3/4;
+  grid-column: 3/4;
+}
+
+#index{
+  display:grid;
+  grid-template-rows: calc(100vh - 60px), auto, auto;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 150px; /* Taille du halo */
+  height: 150px; /* Taille du halo */
+  border-radius: 50%; /* Forme circulaire */
+  background: linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
+  background-size: 200%;
+  animation: animate 2s infinite linear; /* Animation identique au bouton */
+  filter: blur(150px); /* Effet de flou pour le halo */
+  pointer-events: none; /* Empêche le curseur d'interagir avec les éléments */
+  z-index: 1; /* Toujours au-dessus des autres éléments */
+  transform: translate(-50%, -50%); /* Centre le halo sur la position de la souris */
+}
 
 footer{
   position: relative; 
@@ -190,4 +268,127 @@ footer{
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  z-index:2;
 }
+
+
+
+/*Partie Mirina*/
+
+/*à vérifier si ca s'applique */
+#connexion-main{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+#connexion-main{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  }
+
+.login-box{
+  position: relative;
+  width: 400px;
+  height: 450px;
+  background: #aed6f1;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  }
+
+  body.connexion h2{
+    font-size:2em;
+    text-align: center;
+  }
+
+  .input-box{
+    position: relative;
+    width: 310px;
+    margin: 30px 0;
+    border-bottom: 2px solid #ffff;
+}
+.input-box label{
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #ffff;
+  pointer-events: none;
+  transition: .5s;
+
+  }
+
+  .input-box input:focus~label,
+  .input-box input:valid ~label{
+    top: -5px;
+  }
+
+  .input-box input{
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: white;
+    padding: 0 35px 0 5px;
+    
+  }
+
+  .input-box .icon{
+    position: absolute;
+    right: 8px;
+    font-size: 1.2em;
+    line-height: 57px; 
+
+  }
+  
+
+  .remember-forgot{
+    margin: -15px 0 15px; /*haut gauche/droite bas*/
+    font-size: .9em;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .remember-forgot label input{
+    margin-right: 3px;
+  }
+  
+  .remember-forgot a{
+    color: #ffff;
+    text-decoration: none;
+  }
+  .remember-forgot a:hover{
+    text-decoration: underline;
+  }
+  #connexion-main button{
+    width: 100%;
+    height: 40px;
+    background:var(--blue-background);
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    cursor: pointer;
+    color: white;
+    font-size: 1em;
+    font-weight: 500;
+    
+  }
+
+
+  .register_link{
+    font-size: .9em;
+    color: white;
+    text-align: center;
+    margin: 25px 0 10px;
+  }
+
+
