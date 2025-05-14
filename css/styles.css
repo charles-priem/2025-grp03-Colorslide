@@ -987,3 +987,159 @@ footer{
     radial-gradient(at 75% 10%, #102840 0, transparent 50%),
     radial-gradient(at 10% 20%, rgba(7, 20, 103, 0.8) 0, transparent 50%);
 }
+
+/*Dashboard.php*/
+#Dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 80px;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(18px);
+}
+
+#Dashboard section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 80vh;
+  position: relative;
+}
+
+.dashboard-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  margin: 40px 0;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Space Grotesk', 'Poppins', Arial, sans-serif;
+}
+
+.dashboard-box h2 {
+  font-size: 2em;
+  margin-bottom: 18px;
+  color: white;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+
+
+.dashboard-box img[alt="Avatar"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 50%;
+  box-shadow: 0 2px 16px 0 rgba(77,138,255,0.22);
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  background: #222;
+}
+
+.dashboard-box form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.dashboard-box .input-box {
+  position: relative;
+  width: 100%;
+  margin: 25px 0;
+  border-bottom: 2px solid #fff;
+}
+
+.dashboard-box .input-box input[type="text"],
+.dashboard-box .input-box input[type="email"],
+.dashboard-box .input-box input[type="password"] {
+  width: 100%;
+  padding: 15px 10px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1em;
+  outline: none;
+  font-family: inherit;
+}
+
+.dashboard-box .input-box label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  color: #fff;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: 0.5s;
+  opacity: 0.8;
+}
+
+.dashboard-box .input-box input:focus ~ label,
+.dashboard-box .input-box input:valid ~ label {
+  top: -10px;
+  font-size: 0.9em;
+  color: white;
+  opacity: 1;
+}
+
+.dashboard-box button[type="submit"],
+.dashboard-box form[action="logout.php"] button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background-color: var(--blue-background);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  box-shadow: 0 2px 8px rgba(77,138,255,0.10);
+  letter-spacing: 0.5px;
+}
+
+.dashboard-box button[type="submit"]:hover,
+.dashboard-box form[action="logout.php"] button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.dashboard-box p {
+  margin: 10px 0 0 0;
+  font-size: 1em;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .dashboard-box {
+    padding: 18px 8px 16px 8px;
+    max-width: 98vw;
+  }
+  #Dashboard {
+    padding-top: 60px;
+  }
+  .dashboard-box .profile-avatar-wrapper,
+  .dashboard-box .dashboard-avatar-center {
+    width: 100%;
+  }
+  .dashboard-box img[alt="Avatar"] {
+    width: 90px;
+    height: 90px;
+    border-width: 4px;
+  }
+}

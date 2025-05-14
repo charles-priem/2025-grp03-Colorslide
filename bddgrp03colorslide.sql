@@ -71,8 +71,8 @@ CREATE TABLE `stats` (
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `mail` varchar(50) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `mail` varchar(255) NOT NULL,
   `password` text NOT NULL,
   `avatar` longblob,
   PRIMARY KEY (`id`)

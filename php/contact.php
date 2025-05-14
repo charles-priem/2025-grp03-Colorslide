@@ -72,9 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   </style>
 </head>
 <body class="contact">
-  <header>
-    <?php require_once "header1.php"; ?>
-  </header>
+<header>
+  <?php session_start(); ?>
+  <?php require_once "header1.php"; ?>
+  
+
+</header>
 
   <main id="contact">
     <form action="contact.php" method="post" enctype="multipart/form-data">
