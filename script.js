@@ -62,3 +62,11 @@ document.addEventListener('DOMContentLoaded', function () {
     secondDiv.scrollIntoView({ behavior: 'smooth' }); // Défilement fluide vers le deuxième div
   });
 });
+
+
+// Menu dropdown leaderboard
+
+
+
+
+

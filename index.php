@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projet</title>
+    <title>Color Slide</title>
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
     </head>
@@ -12,7 +12,7 @@
     <header>
         <a href="index.php"><img src="#"></a>
         <nav>
-            <a href="#about" class="linkanimation">Leaderboard</a>
+            <a href="php/leaderboard.php" class="linkanimation">Leaderboard</a>
             <a href="php/contact.php" class="linkanimation">Contact</a>
             <a href="php/connexion.php" class="linkanimation">Sign in</a>
             <script src="script.js"></script>
