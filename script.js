@@ -8,6 +8,29 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 }); 
 
+document.addEventListener('DOMContentLoaded', function () {
+  const links = document.querySelectorAll('.linkanimation');
+
+  links.forEach(link => {
+    // Ajoute un événement au survol
+    link.addEventListener('mouseenter', function () {
+      link.classList.add('hovering'); // Ajoute la classe pour l'animation hover
+      link.classList.remove('not-hovering'); // Supprime la classe reverse si elle existe
+    });
+
+    // Ajoute un événement lorsque la souris quitte le lien
+    link.addEventListener('mouseleave', function () {
+      // Attends la fin de l'animation hover avant de lancer l'animation reverse
+      link.addEventListener('animationend', function () {
+        if (!link.matches(':hover')) { // Vérifie que la souris n'est plus sur le lien
+          link.classList.remove('hovering'); // Supprime la classe hover
+          link.classList.add('not-hovering'); // Ajoute la classe pour l'animation reverse
+        }
+      }, { once: true }); // L'événement est déclenché une seule fois
+    });
+  });
+});
+
 // Curseur personnalisé 
 var cursor = document.getElementById("cursor");
 document.body.addEventListener("mousemove", function(e) {

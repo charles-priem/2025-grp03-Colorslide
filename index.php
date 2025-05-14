@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,19 +10,20 @@
 <body>
     <div class='cursor' id="cursor"></div>
     <header>
-        <a href="#"><img src="#"></a>
+        <a href="index.php"><img src="#"></a>
         <nav>
-            <a href="#home" class="linkanimation">Index</a>
             <a href="#about" class="linkanimation">Leaderboard</a>
+            <a href="php/contact.php" class="linkanimation">Contact</a>
             <a href="php/connexion.php" class="linkanimation">Sign in</a>
             <script src="script.js"></script>
         </nav>
     </header>
     <main id="index">
         <div>
-            <button>Get Started</button>
+            <button onclick="window.location.href='play.php';">Get Started</button>
             <a><img src="icons/double-arrow-white.png" id="scroll-icon"></a>
         </div>
+   
         <div id="ancre-scroll">
             <h1>Game mechanics</h1>
         </div>
@@ -46,12 +47,12 @@
                 </div>
             </div>
         </div>
+        <video autoplay loop muted plays-inline class="background-clip">
+            <source src="images/video.mp4" type="video/mp4">
+        </video>
     </main>
     <footer>
-        <div class="container">
-            <h2>Contact</h2>
-        </div>
-
+        <?php include 'php/footer.php'; ?>
     </footer>
 </body>
 </html>

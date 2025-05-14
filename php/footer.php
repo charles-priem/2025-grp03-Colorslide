@@ -1,0 +1,1 @@
+<p class="footer-center">Color Slide &#169;</p>

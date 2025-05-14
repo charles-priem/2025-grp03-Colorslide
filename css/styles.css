@@ -1,3 +1,4 @@
+
 /* <?php
 
     $theme = "dark";
@@ -10,6 +11,9 @@
 
 @import url('https://fonts.googleapis.com/css?family=Space%20Grotesk:700|Space%20Grotesk:400');
 
+body::webkit-scrollbar{
+  display:none;
+}
 
 *{
     margin: 0;
@@ -28,6 +32,7 @@ h1{
     --blue-background: #000e2c;
     --text-color: #ccc;
     --m: 3rem;
+    --card-background: #1c1f2b;
   
   --red: #FF6565;
   --pink: #FF64F9;
@@ -36,17 +41,23 @@ h1{
   --green: #5BFF89;
   --yellow: #FFEE55;
   --orange: #FF6D1B;
+
+    --accent: #4D8AFF;
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --border: rgba(255, 255, 255, 0.2);
+    --input-focus: var(--accent);
 }
 
 body{
     background-color: var(--blue-background);
+    max-width: 100vw;
 }
 
 main{
     min-height: 100vh;
     position:relative;
     overflow: hidden;
-    background-image: 
+    /*background-image: 
     radial-gradient(at 30% 70%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
     radial-gradient(at 90% 10%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
     radial-gradient(at 90% 40%, rgba(107, 37, 104, 0.6) 0, transparent 50%),
@@ -54,7 +65,7 @@ main{
     radial-gradient(at 60% 90%, rgba(20, 40, 80, 0.7) 0, transparent 50%),
     radial-gradient(at 20% 90%, #051c3f 0, transparent 50%),
     radial-gradient(at 75% 10%, #102840 0, transparent 50%),
-    radial-gradient(at 10% 20%, rgba(70, 18, 65, 0.8) 0, transparent 50%);
+    radial-gradient(at 10% 20%, rgba(70, 18, 65, 0.8) 0, transparent 50%); */
   }
 nav {
     margin-left: auto; 
@@ -65,7 +76,7 @@ nav {
 
 header{
     max-height: 60px;
-    position:fixed;
+    position:absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -75,7 +86,6 @@ header{
     align-items: center;
     z-index:100;
     font-family: 'Space Grotesk';
-    backdrop-filter: blur(3px);
 }
 
 nav a{
@@ -105,12 +115,12 @@ nav a{
 }
 
 .linkanimation.animation-ready:not(:hover)::before {
-  animation: link-disappear ease-in-out forwards 0.4s 1;
+  animation: link-disappear ease-in-out forwards 0.3s 1;
   transform-origin: right;
 }
 
 .linkanimation:hover::before {
-  animation: link-appear ease-in-out forwards 0.4s 1 100ms;
+  animation: link-appear ease-in-out forwards 0.3s 1 100ms;
   transform-origin: right; 
 }
 
@@ -125,7 +135,7 @@ nav a{
 
 @keyframes link-disappear {
   0%{
-    transform: translateX(-100%) scalex(-1);
+    transform: translateX(0) scalex(1);
   }
   100%{
     transform: translateX(-100%) scalex(0);
@@ -145,12 +155,13 @@ nav a{
   cursor: pointer;
   overflow: hidden;
   
-  background:linear-gradient(#121213, #121213), linear-gradient(#121213 50%, rgba(18, 18, 19, 0.6) 80%, rgba(18, 18, 19, 0)),  linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
+  background:linear-gradient(var(--card-background), #121213), linear-gradient(var(--card-background) 50%, rgba(18, 18, 19, 0.6) 80%, rgba(18, 18, 19, 0)),  linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   background-origin: border-box;
   background-clip: padding-box, border-box, border-box;
   background-size: 200%;
   animation: animate 2s infinite linear;
   transition: transform 0.3s ease-in-out;
+  z-index:10;
 }
 
 #index button::before {
@@ -207,7 +218,7 @@ nav a{
   justify-content: center;
   align-items: center;
   z-index: 0;
-  height: calc(100vh - 60px);
+  height: 100vh;
   /* background-image: radial-gradient(at center, transparent 48%, #2a0535); */
 }
 
@@ -250,7 +261,7 @@ nav a{
   z-index:2;
   margin: 0 auto;
   padding: 2em;
-  background: #1c1f2b;
+  background: var(--card-background);
   text-align: center;
   border-radius: 10px;
   position:relative;
@@ -323,7 +334,7 @@ nav a{
 
 #index{
   display:grid;
-  grid-template-rows: calc(100vh - 60px), auto, auto;
+  grid-template-rows: 100vh, auto, auto;
   grid-template-columns: repeat(3, 1fr);
 }
 
@@ -331,8 +342,8 @@ nav a{
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px; /* Taille du halo */
-  height: 300px; /* Taille du halo */
+  width: 150px; /* Taille du halo */
+  height: 150px; /* Taille du halo */
   border-radius: 50%; /* Forme circulaire */
   background: linear-gradient(90deg, var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   background-size: 200%;
@@ -344,6 +355,7 @@ nav a{
 }
 
 footer{
+  position: relative;
   margin-top:-60px;
   max-height: 60px;
   top: 0;
@@ -355,7 +367,6 @@ footer{
   align-items: center;
   z-index:100;
   font-family: 'Space Grotesk';
-  backdrop-filter: blur(3px);
 }
 
 
@@ -370,19 +381,11 @@ footer{
   font-family: 'Poppins', sans-serif;
 }
 /* Réinitialisation de base et styles pour le plein écran */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* Empêche les barres de défilement si la vidéo dépasse légèrement */
-    font-family: 'Poppins', sans-serif;
-    box-sizing: border-box;
+#connexion-main{
+  font-family: 'Poppins', sans-serif;
 }
 
-*, *::before, *::after {
-    box-sizing: inherit;
-}
+
 
 /* Styles pour la vidéo de fond */
 #background-video {
@@ -408,20 +411,9 @@ html, body {
   */
 }
 
-/* Styles pour que le contenu (header, main) soit bien positionné par-dessus */
-header {
-    position: relative; /* ou fixed/absolute selon vos besoins */
-    z-index: 10; /* Doit être supérieur à celui de la vidéo */
-    /* Ajoutez ici vos styles de header spécifiques (couleur de fond, etc.) */
-    /* Exemple:
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    */
-}
 
-main#connexion-main {
+
+#connexion-main {
     display: flex;
     flex-direction: column; /* Si header est au-dessus et section en dessous */
     justify-content: center; /* Centre la section verticalement dans l'espace restant */
@@ -436,14 +428,14 @@ main#connexion-main {
        Ex: si header a height: 60px; alors padding-top: 70px; (un peu plus)
     */
 }
-section{
+#connexion-main section{
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   
 }
-.login-box{
+#connexion-main .login-box{
   position: relative;
   width: 400px;
   height: 450px;
@@ -461,13 +453,13 @@ section{
     text-align: center;
   }
 
-  .input-box{
+  #connexion-main .input-box{
     position: relative;
     width: 310px;
     margin: 30px 0;
     border-bottom: 2px solid #ffff;
 }
-.input-box label{
+#connexion-main .input-box label{
   position: absolute;
   top: 50%;
   left: 5px;
@@ -479,12 +471,12 @@ section{
 
   }
 
-  .input-box input:focus~label,
-  .input-box input:valid ~label{
+  #connexion-main .input-box input:focus~label,
+  #connexion-main .input-box input:valid ~label{
     top: -5px;
   }
 
-  .input-box input{
+  #connexion-main .input-box input{
     width: 100%;
     height: 50px;
     background: transparent;
@@ -496,16 +488,17 @@ section{
     
   }
 
-  .input-box .icon{
+  #connexion-main .input-box .icon{
     position: absolute;
     right: 8px;
     font-size: 1.2em;
     line-height: 57px; 
+    color: #ffffff;
 
   }
   
 
-  .remember-forgot{
+  #connexion-main .remember-forgot{
     margin: -15px 0 15px; /*haut gauche/droite bas*/
     font-size: .9em;
     color: white;
@@ -513,15 +506,15 @@ section{
     justify-content: space-between;
   }
 
-  .remember-forgot label input{
+  #connexion-main .remember-forgot label input{
     margin-right: 3px;
   }
   
-  .remember-forgot a{
+  #connexion-main .remember-forgot a{
     color: #ffff;
     text-decoration: none;
   }
-  .remember-forgot a:hover{
+  #connexion-main .remember-forgot a:hover{
     text-decoration: underline;
   }
   #connexion-main button{
@@ -539,22 +532,184 @@ section{
   }
 
 
-  .register-link{
+  #connexion-main .register-link{
     font-size: .9em;
     color: white;
     text-align: center;
     margin: 25px 0 10px;
   }
 
-  .register-link p a{
+  #connexion-main .register-link p a{
     color: #ffff;
     text-decoration: none;
     font-weight: 600;
   }
 
-  .register-link p a:hover{
+  #connexion-main .register-link p a:hover{
     text-decoration:underline;
   }
 
+.background-clip{
+  grid-row: 1/2;
+  position:absolute;
+  z-index:-1;
+  aspect-ratio:21/9;
+  object-fit: fill;
+  height:100vh;
+  width:100%;
+  overflow:hidden;
+
+}
+
+.footer-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  color: white; /* assure la visibilité */
+  background: transparent; /* ou une couleur si besoin */
+  width: 100%;
+  height: 100%;
+  font-size: 1em;
+}
 
 /*rendre responsive si idée validée*/
+
+
+/*LA PARTIE DE MOI*/
+#contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--blue-background);
+  color: var(--text-color);
+}
+
+#contact form {
+  width: 90%;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  margin-top: 100px;
+  padding: 2em;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+#contact fieldset {
+  border: none;
+  margin-bottom: 1.5em;
+}
+
+#contact legend {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1em;
+}
+
+#contact label {
+  color: white;
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+#contact input[type="text"],
+#contact input[type="email"],
+#contact textarea,
+#contact select {
+  width: 100%;
+  padding: 0.75em;
+  margin-top: 0.25em;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0.5em;
+  color: white;
+  font-size: 1em;
+  transition: border 0.3s ease;
+}
+
+#contact input[type="text"]:focus,
+#contact input[type="email"]:focus,
+#contact textarea:focus,
+#contact select:focus {
+  outline: none;
+  border: 1px solid #ffffff;
+}
+
+#contact option {
+  color: black;
+  background-color: white;
+}
+
+#contact textarea {
+  resize: vertical;
+}
+
+#contact input[type="radio"] {
+  margin-right: 0.5em;
+  transform: scale(1.1);
+}
+
+#contact input[type="file"] {
+  display: none;
+}
+
+#contact .custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--blue-background);
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+#contact .custom-file-upload:hover {
+  background-color: #0056b3;
+}
+
+#contact #file-name {
+  margin-left: 10px;
+  font-size: 0.9em;
+  color: #e0e0e0;
+}
+
+#contact input[type="submit"],
+#contact input[type="reset"] {
+  width: 100%;
+  padding: 0.8em;
+  border: none;
+  border-radius: 30px;
+  background-color: var(--blue-background);
+  color: white;
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 1em;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+#contact input[type="submit"]:hover,
+#contact input[type="reset"]:hover {
+  transform: scale(1.05);
+  background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+  #contact form {
+    width: 95%;
+    padding: 1.5em;
+  }
+
+  #contact input[type="submit"],
+  #contact input[type="reset"] {
+    width: 100%;
+  }
+}
