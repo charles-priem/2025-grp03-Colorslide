@@ -14,28 +14,30 @@ $success = "";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = $_POST['name'] ?? '';
-    $mail = $_POST['email'] ?? '';
+    $firstname = $_POST['FirstName'] ?? '';
+    $lastname = $_POST['LastName'] ?? '';
+    $mail = $_POST['Email'] ?? '';
     $pwd = $_POST['password'] ?? '';
 
-    if (!empty($name) && !empty($mail) && !empty($pwd)) {
+    if (!empty($firstname) && !empty($lastname) && !empty($mail) && !empty($pwd)) {
         $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO users (name, mail, password) VALUES (?, ?, ?)");
-        if ($stmt->execute([$name, $mail, $hashedPwd])) {
-            $success = "Inscription réussie ! <a href='connexion.php'>Se connecter</a>";
+        // avatar est NULL par défaut
+        $stmt = $pdo->prepare("INSERT INTO users (firstname, name, mail, password) VALUES (?, ?, ?, ?)");
+        if ($stmt->execute([$firstname, $lastname, $mail, $hashedPwd])) {
+            $success = "Registration successful! <a href='connexion.php'>Sign in</a>";
         } else {
-            $error = "Erreur lors de l'inscription.";
+            $error = "Registration error.";
         }
     } else {
-        $error = "Tous les champs sont requis.";
+        $error = "All fields are required.";
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Color Slide - Inscription</title>
+    <title>Color Slide - Register</title>
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body class="connexion">
@@ -45,9 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <main id="connexion-main">
     <section>
-        <!-- <video autoplay muted loop id="background-video">
-            <source src="../images/video.mp4" type="video/mp4">
-        </video> -->
         <div class="login-box">
             <form action="" method="post">
                 <h2>Register</h2>
@@ -57,16 +56,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <?php elseif ($error): ?>
                     <p class="error"><?= $error ?></p>
                 <?php endif; ?>
-
                 <div class="input-box">
                     <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <input type="text" name="name" required>
-                    <label>Name</label>
+                    <input type="text" name="FirstName" required>
+                    <label>First Name</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+                    <input type="text" name="LastName" required>
+                    <label>Last Name</label>
                 </div>
 
                 <div class="input-box">
                     <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
-                    <input type="email" name="email" required>
+                    <input type="email" name="Email" required>
                     <label>Email</label>
                 </div>
 

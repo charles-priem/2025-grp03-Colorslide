@@ -12,13 +12,7 @@
     🏆
     </div>
     <header>
-        <a href="index.php"><img src="#"></a>
-        <nav>
-            <a href="#about" class="linkanimation">Leaderboard</a>
-            <a href="php/contact.php" class="linkanimation">Contact</a>
-            <a href="php/connexion.php" class="linkanimation">Sign in</a>
-            <script src="script.js"></script>
-        </nav>
+        <?php include 'php/header1.php'; ?>
     </header>
     <main id="play">
         <div class="game-wrapper">

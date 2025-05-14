@@ -1010,6 +1010,13 @@ footer{
   position: relative;
 }
 
+.dashboard-avatar-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .dashboard-box {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255,255,255,0.2);
@@ -1036,9 +1043,8 @@ footer{
   z-index: 2;
 }
 
-
-
-.dashboard-box img[alt="Avatar"] {
+.dashboard-box img[alt="Avatar"],
+.dashboard-box img[alt="Profile picture"] {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -1137,9 +1143,19 @@ footer{
   .dashboard-box .dashboard-avatar-center {
     width: 100%;
   }
-  .dashboard-box img[alt="Avatar"] {
+  .dashboard-box img[alt="Avatar"],
+  .dashboard-box img[alt="Profile picture"] {
     width: 90px;
     height: 90px;
     border-width: 4px;
   }
+}
+.ChangeProfilePicture{
+text-align:center; color:white; font-size:0.95em;
+}
+#avatar-upload{
+  display: none;
+}
+.profile-photo{
+display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;
 }
