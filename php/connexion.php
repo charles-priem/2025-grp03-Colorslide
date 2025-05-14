@@ -8,9 +8,14 @@
 </head>
 <body class="connexion">
     <header>
-    <<?php require_once "header.php"; ?>
+    <?php require_once "header.php"; ?>
 </header>
-    <main id="connexion-main">>
+    <main id="connexion-main">
+        <section>
+            <video autoplay muted loop id="background-video">
+        <source src="../images/video.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la balise vidéo.
+             </video>     
     <div class="login-box">
         <form action="">
             <h2>Login</h2>
@@ -36,11 +41,32 @@
         </div>
         </form>
     </div>
+</section>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    
+
+<!-- Script pour ralentir la vidéo -->
+    <script>
+        const videoElement = document.getElementById('background-video');
+
+        if (videoElement) {
+            
+            videoElement.addEventListener('canplay', function() {
+            
+                this.playbackRate = 0.70; //  ajuster selon les préférences
+            });
+
+            if (videoElement.readyState >= 3) { // HAVE_FUTURE_DATA ou HAVE_ENOUGH_DATA
+                 videoElement.playbackRate = 0.75;
+            }
+
+        } else {
+            console.warn('Element video avec ID "background-video" non trouvé.');
+        }
+    </script>
+</main>   
 
 
      
-</body>
+
 </html>
