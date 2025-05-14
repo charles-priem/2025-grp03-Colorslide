@@ -133,7 +133,6 @@ nav a{
 }
 
 #index button {
-  margin-bottom:60px;
   border: calc(0.09 * var(--m)) solid transparent;
   position: relative;
   color: #F3F3F3;
@@ -251,7 +250,6 @@ nav a{
   z-index:2;
   margin: 0 auto;
   padding: 2em;
-  width: 400px;
   background: #1c1f2b;
   text-align: center;
   border-radius: 10px;
@@ -264,13 +262,20 @@ nav a{
 }
 
 #index .card h2{
-
+  font-size: 1.5em;
+  margin-bottom: 1em;
 }
 
 .card-wrapper {
   position: relative;
   display: inline-block;
   transform: translateZ(0);
+  margin:0 50px;
+  transition: transform 0.3s ease, filter 0.3s ease; /* Transition fluide pour l'effet */
+}
+
+.card-wrapper:hover {
+  transform: scale(1.05); /* Agrandit légèrement la carte */
 }
 
 @property --angle {
@@ -293,6 +298,10 @@ nav a{
   background: conic-gradient(from var(--angle), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   border-radius: 10px;
   animation: 3s spin linear infinite;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Transition fluide */
+  transform: translate(-50%, -50%) scale(1); /* Agrandit légèrement l'after */
+  opacity: 0.5; /* Rend l'after visible */
 }
 
 #index .card-wrapper::before {
@@ -300,6 +309,8 @@ nav a{
   opacity: 0.5;
 
 }
+
+
 
 @keyframes spin {
   0% {
