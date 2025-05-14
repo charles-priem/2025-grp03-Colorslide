@@ -282,23 +282,91 @@ footer{
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
+/* Réinitialisation de base et styles pour le plein écran */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Empêche les barres de défilement si la vidéo dépasse légèrement */
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
 
-#connexion-main{
-  display:flex;
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+/* Styles pour la vidéo de fond */
+#background-video {
+  position: fixed; /* Fixé par rapport au viewport */
+  right: 0;
+  bottom: 0;
+  min-width: 100%; /* S'assure qu'elle couvre au moins toute la largeur */
+  min-height: 100%; /* S'assure qu'elle couvre au moins toute la hauteur */
+  width: auto; /* Permet de maintenir le ratio */
+  height: auto; /* Permet de maintenir le ratio */
+  z-index: -100; /* La mettre bien en arrière-plan */
+  /* Pour centrer la vidéo si son ratio est différent de l'écran */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Alternative utilisant object-fit (souvent plus simple):
+  object-fit: cover;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  transform: none;
+  */
+}
+
+/* Styles pour que le contenu (header, main) soit bien positionné par-dessus */
+header {
+    position: relative; /* ou fixed/absolute selon vos besoins */
+    z-index: 10; /* Doit être supérieur à celui de la vidéo */
+    /* Ajoutez ici vos styles de header spécifiques (couleur de fond, etc.) */
+    /* Exemple:
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    */
+}
+
+main#connexion-main {
+    display: flex;
+    flex-direction: column; /* Si header est au-dessus et section en dessous */
+    justify-content: center; /* Centre la section verticalement dans l'espace restant */
+    align-items: center; /* Centre la section horizontalement */
+    min-height: 100vh; /* S'assure que le main prend au moins toute la hauteur de l'écran */
+    width: 100%;
+    position: relative; /* Nécessaire pour que z-index fonctionne */
+    z-index: 1; /* Au-dessus de la vidéo, mais potentiellement sous un header avec z-index plus élevé */
+    padding: 20px; /* Espace autour du contenu principal */
+    /* Si votre header est 'fixed' et a une hauteur, ajoutez un padding-top ici
+       pour éviter que le contenu de 'main' ne passe sous le header.
+       Ex: si header a height: 60px; alors padding-top: 70px; (un peu plus)
+    */
+}
+section{
+  display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  }
-
+  width: 100%;
+  
+}
 .login-box{
   position: relative;
   width: 400px;
   height: 450px;
-  background: #aed6f1;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, .5);
   border-radius: 20px;
   justify-content: center;
   align-items: center;
   display: flex;
+  backdrop-filter: blur(15px);
   }
 
   body.connexion h2{
@@ -384,11 +452,22 @@ footer{
   }
 
 
-  .register_link{
+  .register-link{
     font-size: .9em;
     color: white;
     text-align: center;
     margin: 25px 0 10px;
   }
 
+  .register-link p a{
+    color: #ffff;
+    text-decoration: none;
+    font-weight: 600;
+  }
 
+  .register-link p a:hover{
+    text-decoration:underline;
+  }
+
+
+/*rendre responsive si idée validée*/
