@@ -8,8 +8,8 @@
             <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="/2025-grp03/php/dashboard.php" class="linkanimation">Profile</a>
             <?php else: ?>
-                <a href="/2025-grp03/php/connexion.php" class="linkanimation">Sign in</a>      
+                <a href="/2025-grp03/php/auth.php" class="linkanimation">Sign in</a>      
              <?php endif; ?>
-            <script src="../script.js"></script>
+            <script src="/2025-grp03/script.js"></script>
         </nav>
         

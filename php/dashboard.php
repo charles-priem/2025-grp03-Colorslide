@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -10,8 +9,9 @@ if (!isset($_SESSION['user_id'])) {
 $success = '';
 $error = '';
 
+require_once 'db.php'; 
+
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=bddgrp03colorslide;charset=utf8', 'root', 'root');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -23,12 +23,26 @@ try {
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $name = $_POST['name'] ?? '';
-        $firstname = $_POST['firstname'] ?? '';
-        $mail = $_POST['mail'] ?? '';
-        $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : $user['password'];
+        $username = $_POST['username'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $newPassword = $_POST['password'] ?? '';
+        $password = $user['password']; // Par défaut, on garde l'ancien
 
-        // Avatar
+
+         // Validation du mot de passe si modifié
+    if (!empty($newPassword)) {
+        if (strlen($newPassword) < 8) {
+            $error = "Password must be at least 8 characters.";
+        } elseif (!preg_match('/[0-9]/', $newPassword)) {
+            $error = "Password must contain at least one digit.";
+        } elseif (!preg_match('/[a-zA-Z]/', $newPassword)) {
+            $error = "Password must contain at least one letter.";
+        } else {
+            $password = password_hash($newPassword, PASSWORD_DEFAULT);
+        }
+    }
+    if(!$error) {
+        /* Avatar */
         if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             $maxFileSize = 2 * 1024 * 1024; // 2 MB
@@ -46,13 +60,14 @@ try {
             $avatar = $user['avatar'];
         }
 
-        $update = $pdo->prepare("UPDATE users SET name = ?, firstname = ?, mail = ?, password = ?, avatar = ? WHERE id = ?");
-        $update->execute([$name, $firstname, $mail, $password, $avatar, $_SESSION['user_id']]);
+        $update = $pdo->prepare("UPDATE users SET username = ?, email = ?, password = ?, avatar = ? WHERE id = ?");
+        $update->execute([$username, $email, $password, $avatar, $_SESSION['user_id']]);
 
         $success = "Profile updated successfully!";
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
     }
+}
 
 } catch (PDOException $e) {
     $error = "Database error: " . $e->getMessage();
@@ -75,11 +90,7 @@ try {
 
 <main id="Dashboard">
     <section>
-        <video autoplay muted loop id="background-video">
-            <source src="../images/video.mp4" type="video/mp4">
-        </video>
-
-        <div class="dashboard-box" id="Profile">
+      <div class="dashboard-box" id="Profile">
             <form method="POST" enctype="multipart/form-data">
                 <h2>My Profile</h2>
                 <div class="profile-photo" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;">
@@ -100,23 +111,18 @@ try {
                 </div>
 
                 <?php if ($success): ?>
-                    <p style="color: green;"><?= htmlspecialchars($success) ?></p>
+                    <p class="success"><?= htmlspecialchars($success) ?></p>
                 <?php elseif ($error): ?>
-                    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+                    <p class="error"><?= htmlspecialchars($error) ?></p>
                 <?php endif; ?>
 
                 <div class="input-box">
-                    <input type="text" name="firstname" value="<?= htmlspecialchars($user['firstname'] ?? '') ?>" required>
-                    <label>First Name</label>
+                    <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>" required>
+                    <label>Username</label>
                 </div>
 
                 <div class="input-box">
-                    <input type="text" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
-                    <label>Last Name</label>
-                </div>
-
-                <div class="input-box">
-                    <input type="email" name="mail" value="<?= htmlspecialchars($user['mail'] ?? '') ?>" required>
+                    <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
                     <label>Email</label>
                 </div>
 

@@ -2,6 +2,6 @@
         <nav>
             <a href="php/leaderboard.php" class="linkanimation">Leaderboard</a>
             <a href="php/contact.php" class="linkanimation">Contact</a>
-            <a href="php/connexion.php" class="linkanimation">Sign in</a>
+            <a href="php/auth.php" class="linkanimation">Sign in</a>
             <script src="../script.js"></script>
         </nav>

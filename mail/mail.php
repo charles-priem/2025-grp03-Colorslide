@@ -5,7 +5,10 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 // Chargement de l'autoloader de Composer
-require 'vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
+
+// Connexion à la base de données
+require_once __DIR__ . '/../php/db.php';
 
 // Charger les variables d'environnement
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -16,12 +19,20 @@ if (!isset($_ENV['EMAIL_USERNAME']) || !isset($_ENV['EMAIL_PASSWORD'])) {
     die('Les variables d\'environnement ne sont pas correctement définies');
 }
 
-function sendRecoveryMail($to, $code) {
-    // Création d'une instance ; passer true active les exceptions
+function sendRecoveryMail($to, $user_id) {
+    global $pdo;
+
+    // Générer un code à 6 chiffres
+    $code = rand(100000, 999999);
+
+    // Enregistrer le code dans la table recuperation
+    $stmt = $pdo->prepare("INSERT INTO recuperation (user_id, code) VALUES (?, ?)");
+    $stmt->execute([$user_id, $code]);
+
+    // Envoi du mail
     $mail = new PHPMailer(true);
 
     try {
-        // Paramètres du serveur
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
@@ -29,8 +40,6 @@ function sendRecoveryMail($to, $code) {
         $mail->Password   = $_ENV['EMAIL_PASSWORD'];
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-
-        // Options du certificat
         $mail->SMTPOptions = array(
             'ssl' => array(
                 'verify_peer' => false,
@@ -38,27 +47,15 @@ function sendRecoveryMail($to, $code) {
                 'allow_self_signed' => true
             )
         );
-
-        // Destinataires
-        $mail->setFrom('clement.rubin76@gmail.com', 'Support');
+        $mail->setFrom($_ENV['EMAIL_USERNAME'], 'Support');
         $mail->addAddress($to);
-
-        // Contenu
         $mail->isHTML(true);
         $mail->Subject = 'Demande de reinitialisation du mot de passe';
         $mail->Body    = "Votre code de recuperation est : <b>$code</b>";
-        $mail->AltBody = "Votre code de recuperation est    : $code";
-
+        $mail->AltBody = "Votre code de recuperation est : $code";
         $mail->send();
-        echo 'Le message a été envoyé';
+        // echo 'Le message a été envoyé'; // Optionnel, à commenter pour éviter l'affichage lors de la redirection
     } catch (Exception $e) {
         echo "Le message n'a pas pu être envoyé. Erreur du mailer : {$mail->ErrorInfo}";
     }
-}
-
-
-// Test manuel : à supprimer ou adapter ensuite
-if (isset($_GET['test'])) {
-    // Mets ici ton adresse mail pour tester
-    sendRecoveryMail('delattre.gauthier1@gmail.com', rand(100000, 999999));
 }

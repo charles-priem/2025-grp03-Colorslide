@@ -10,10 +10,6 @@
 
 @import url('https://fonts.googleapis.com/css?family=Space%20Grotesk:700|Space%20Grotesk:400');
 
-body::webkit-scrollbar{
-  display:none;
-}
-
 *{
     margin: 0;
     padding: 0;
@@ -48,23 +44,23 @@ h1{
 }
 
 body{
-    background-color: var(--blue-background);
-    max-width: 100vw;
+  background-color: var(--blue-background);
+  max-width: 100vw;
+  background-image: 
+  radial-gradient(at 30% 70%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
+  radial-gradient(at 90% 10%, rgba(8, 1, 27, 0.5) 0, transparent 50%),
+  radial-gradient(at 90% 40%, rgba(99, 23, 95, 0.6) 0, transparent 50%),
+  radial-gradient(at 85% 85%, #110a58b0 0, rgba(31, 21, 88, 0.3) 50%),
+  radial-gradient(at 60% 90%, rgba(20, 40, 80, 0.7) 0, transparent 50%),
+  radial-gradient(at 20% 90%, #051c3f 0, transparent 50%),
+  radial-gradient(at 75% 10%, #102840 0, transparent 50%),
+  radial-gradient(at 10% 20%, rgba(70, 18, 65, 0.8) 0, transparent 50%);
 }
 
 main{
     min-height: 100vh;
     position:relative;
     overflow: hidden;
-    /*background-image: 
-    radial-gradient(at 30% 70%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
-    radial-gradient(at 90% 10%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
-    radial-gradient(at 90% 40%, rgba(107, 37, 104, 0.6) 0, transparent 50%),
-    radial-gradient(at 85% 85%, #9e4663b0 0, rgba(212, 115, 180, 0.3) 50%),
-    radial-gradient(at 60% 90%, rgba(20, 40, 80, 0.7) 0, transparent 50%),
-    radial-gradient(at 20% 90%, #051c3f 0, transparent 50%),
-    radial-gradient(at 75% 10%, #102840 0, transparent 50%),
-    radial-gradient(at 10% 20%, rgba(70, 18, 65, 0.8) 0, transparent 50%); */
   }
 nav {
     margin-left: auto; 
@@ -163,6 +159,7 @@ nav a{
   z-index:10;
 }
 
+
 #index button::before {
   content: '';
   z-index: 0;
@@ -174,7 +171,7 @@ nav a{
   background-size: 200%;
   animation: animate 2s infinite linear;
   filter: blur(calc(0.8 * var(--m)));
-}
+} 
 
 #index div:first-child a img{
   width:50px;
@@ -194,9 +191,16 @@ nav a{
   }
 }
 
-#index button:hover, #index button:hover::before {
+
+#index button:hover {
+  transform: scale(1.05);
   animation: animate 0.5s infinite linear;
 }
+
+#index button:hover::before {
+  animation: animate 0.5s infinite linear;
+}
+
 
 @keyframes animate {
   0% {background-position: 0; }
@@ -238,7 +242,7 @@ nav a{
   justify-content: space-around;
   z-index:0;
   position: relative;
-  padding-bottom:5em;
+  padding-bottom:7em;
 }
 
 #index .card:first-of-type{
@@ -260,7 +264,7 @@ nav a{
   z-index:2;
   margin: 0 auto;
   padding: 2em;
-  background: var(--card-background);
+  background: var(--blue-background);
   text-align: center;
   border-radius: 10px;
   position:relative;
@@ -319,10 +323,6 @@ nav a{
   opacity: 0.5;
 }
 
-
-
-
-
 @keyframes spin {
   0% {
     --angle: 0deg;
@@ -376,177 +376,225 @@ footer{
 /*à vérifier si ca s'applique */
 #connexion-main{
   margin: 0;
-  padding: 0;
+  padding: 0 !important;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-/* Réinitialisation de base et styles pour le plein écran */
-#connexion-main{
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Space Grotesk';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(18px); 
 }
 
+#connexion-main h2{
+  padding-bottom: 1em;
+}
 
 /* Styles pour la vidéo de fond */
-#background-video {
-  position: fixed; /* Fixé par rapport au viewport */
-  right: 0;
-  bottom: 0;
-  min-width: 100%; /* S'assure qu'elle couvre au moins toute la largeur */
-  min-height: 100%; /* S'assure qu'elle couvre au moins toute la hauteur */
-  width: auto; /* Permet de maintenir le ratio */
-  height: auto; /* Permet de maintenir le ratio */
-  z-index: -100; /* La mettre bien en arrière-plan */
-  /* Pour centrer la vidéo si son ratio est différent de l'écran */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /* Alternative utilisant object-fit (souvent plus simple):
-  object-fit: cover;
+.background-clip {
+  position: fixed;
+  top: 0; left: 0;
   width: 100vw;
   height: 100vh;
-  top: 0;
-  left: 0;
-  transform: none;
-  */
+  object-fit: cover;
+  z-index: -100;
+  pointer-events: none;
 }
 
-
-
-#connexion-main {
-    display: flex;
-    flex-direction: column; /* Si header est au-dessus et section en dessous */
-    justify-content: center; /* Centre la section verticalement dans l'espace restant */
-    align-items: center; /* Centre la section horizontalement */
-    min-height: 100vh; /* S'assure que le main prend au moins toute la hauteur de l'écran */
-    width: 100%;
-    position: relative; /* Nécessaire pour que z-index fonctionne */
-    z-index: 1; /* Au-dessus de la vidéo, mais potentiellement sous un header avec z-index plus élevé */
-    padding: 20px; /* Espace autour du contenu principal */
-    /* Si votre header est 'fixed' et a une hauteur, ajoutez un padding-top ici
-       pour éviter que le contenu de 'main' ne passe sous le header.
-       Ex: si header a height: 60px; alors padding-top: 70px; (un peu plus)
-    */
-}
-#connexion-main section{
+#connexion-main section {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  
+  height: 100vh;
 }
-#connexion-main .login-box{
-  position: relative;
-  width: 400px;
-  height: 450px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, .5);
-  border-radius: 20px;
+
+#connexion-main .form-wrapper {
+  display: flex;
   justify-content: center;
   align-items: center;
-  display: flex;
-  backdrop-filter: blur(15px);
-  }
-
-  body.connexion h2{
-    font-size:2em;
-    text-align: center;
-  }
-
-  #connexion-main .input-box{
-    position: relative;
-    width: 310px;
-    margin: 30px 0;
-    border-bottom: 2px solid #ffff;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
-#connexion-main .input-box label{
+
+#connexion-main .login-box {
+  position:absolute;
+  margin: auto;
+  width: 100%;
+  max-width: 400px;
+  min-width: 300px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 30px 25px ;
+  box-sizing: border-box;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.5s;
+  opacity: 1;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+#login-box{
+  max-height: 30em;
+}
+
+#register-box{
+  max-height: 40em;
+}
+
+.no-anim .login-box,
+.no-anim #register-box,
+.no-anim #login-box {
+  transition: none !important;
+}
+
+#connexion-main .login-box.slide-out-left {
+  transform: translateX(-120%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+#connexion-main .login-box.slide-in-right {
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 2;
+}
+#connexion-main .login-box.slide-out-right {
+  transform: translateX(120%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+#connexion-main .login-box.slide-in-left {
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 2;
+}
+
+body.connexion h2 {
+  font-size: 2em;
+  text-align: center;
+}
+
+#connexion-main .input-box {
+  position: relative;
+  width: 310px;
+  margin: 30px auto;
+  border-bottom: 2px solid #fff;
+}
+
+#connexion-main .input-box label {
   position: absolute;
   top: 50%;
   left: 5px;
   transform: translateY(-50%);
   font-size: 1em;
-  color: #ffff;
+  color: #fff;
   pointer-events: none;
   transition: .5s;
+}
 
-  }
+#connexion-main .input-box input:focus ~ label,
+#connexion-main .input-box input:valid ~ label {
+  top: -5px;
+}
 
-  #connexion-main .input-box input:focus~label,
-  #connexion-main .input-box input:valid ~label{
-    top: -5px;
-  }
+#connexion-main .input-box input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  color: white;
+  padding: 0 35px 0 5px;
+}
 
-  #connexion-main .input-box input{
-    width: 100%;
-    height: 50px;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 1em;
-    color: white;
-    padding: 0 35px 0 5px;
-    
-  }
+#connexion-main .input-box .icon {
+  position: absolute;
+  right: 8px;
+  font-size: 1.2em;
+  line-height: 57px;
+  color: #fff;
+}
 
-  #connexion-main .input-box .icon{
-    position: absolute;
-    right: 8px;
-    font-size: 1.2em;
-    line-height: 57px; 
-    color: #ffffff;
+#connexion-main .remember-forgot {
+  margin: -15px 0 15px;
+  font-size: .9em;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
 
-  }
-  
+#connexion-main .remember-forgot label input {
+  margin-right: 3px;
+}
 
-  #connexion-main .remember-forgot{
-    margin: -15px 0 15px; /*haut gauche/droite bas*/
-    font-size: .9em;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-  }
+#connexion-main .remember-forgot a {
+  color: #fff;
+  text-decoration: none;
+}
+#connexion-main .remember-forgot a:hover {
+  text-decoration: underline;
+}
 
-  #connexion-main .remember-forgot label input{
-    margin-right: 3px;
-  }
-  
-  #connexion-main .remember-forgot a{
-    color: #ffff;
-    text-decoration: none;
-  }
-  #connexion-main .remember-forgot a:hover{
-    text-decoration: underline;
-  }
-  #connexion-main button{
-    width: 100%;
-    height: 40px;
-    background:var(--blue-background);
-    border: none;
-    outline: none;
-    border-radius: 40px;
-    cursor: pointer;
-    color: white;
-    font-size: 1em;
-    font-weight: 500;
-    
-  }
+#connexion-main button {
+  width: 100%;
+  height: 40px;
+  background: var(--blue-background);
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  cursor: pointer;
+  color: white;
+  font-size: 1em;
+  font-weight: 500;
+}
+#connexion-main button:hover {
+  background-color: #0056b3;
+}
+#connexion-main .register-link {
+  font-size: .9em;
+  color: white;
+  text-align: center;
+  margin: 25px 0 10px;
+}
 
+#connexion-main .register-link p a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+#connexion-main .register-link p a:hover {
+  text-decoration: underline;
+}
 
-  #connexion-main .register-link{
-    font-size: .9em;
-    color: white;
-    text-align: center;
-    margin: 25px 0 10px;
+/* Responsive */
+@media (max-width: 600px) {
+  #connexion-main .login-box {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 18px 8px;
   }
-
-  #connexion-main .register-link p a{
-    color: #ffff;
-    text-decoration: none;
-    font-weight: 600;
+  #connexion-main .input-box {
+    min-width: 0;
   }
-
-  #connexion-main .register-link p a:hover{
-    text-decoration:underline;
+  #connexion-main section,
+  #connexion-main .form-wrapper {
+    height: 100vh;
+    min-height: 100vh;
+    padding: 0;
   }
+}
 
 #play .game-wrapper{
   height:calc(100vh - 150px);
@@ -728,24 +776,42 @@ footer{
 
 /*LA PARTIE DE MOI*/
 #contact {
-  min-height: 100vh;
+  margin: 0;
+  padding: 0 !important;
+  box-sizing: border-box;
+  font-family: 'Space Grotesk';
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* centré horizontalement, démarre en haut */
-  padding: 80px 20px 40px; /* espace en haut + padding standard */
-  box-sizing: border-box;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(18px);
 }
 
+
 #contact form {
+  position: absolute;
+  margin: auto;
   width: 100%;
-  max-width: 500px; /* réduit un peu la taille */
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  max-width: 400px;
+  min-width: 300px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.2);
   border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  padding: 30px 25px;
+  box-sizing: border-box;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.5s;
+  opacity: 1;
+  z-index: 10;
+  pointer-events: auto;
 }
+
 
 #contact form h2 {
   text-align: center;
@@ -832,7 +898,7 @@ footer{
   display: none;
 }
 
-#contact button {
+#contact button, #connexion-main button {
   width: 100%;
   padding: 12px;
   margin-top: 15px;
@@ -846,8 +912,9 @@ footer{
   transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
-#contact button:hover {
-  transform: scale(1.05);
+
+#contact button:hover, #connexion-main button:hover {
+  transform: scale(1.03);
   background-color: #0056b3;
 }
 
@@ -861,17 +928,43 @@ footer{
     margin-bottom: 10px;
   }
 }
-
-/* Leaderboard cohérent avec la palette du site et un thead multicolore */
-.dbleaderboard-container {
-  max-width: 800px;
-  margin: 60px auto 40px auto;
-  padding: 32px 24px;
-  background: var(--card-background, #1c1f2b);
-  border-radius: 18px;
-  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18);
-  font-family: 'Space Grotesk', 'Poppins', Arial, sans-serif;
+/* Contact Responsive */
+@media (max-width: 900px) {
+  #contact {
+    padding: 40px 5vw 20px 5vw;
+    align-items: flex-start;
+  }
+  #contact form {
+    max-width: 98vw;
+    padding: 18px 8px;
+  }
 }
+
+@media (max-width: 600px) {
+  #contact {
+    padding: 20px 2vw 10px 2vw;
+    min-height: 100vh;
+    align-items: flex-start;
+  }
+  #contact form {
+    max-width: 100vw;
+    padding: 12px 2vw;
+  }
+  #contact .input-box {
+    width: 100%;
+    margin: 18px 0;
+  }
+  #contact button {
+    font-size: 0.95em;
+    padding: 10px;
+  }
+  #contact .radio-label {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+}
+/* Leaderboard élégant, sans animation ni gradient sur le thead, et sans style pour les boutons supprimer */
+
 
 .dbleaderboard {
   width: 100%;
@@ -883,17 +976,7 @@ footer{
 }
 
 .dbleaderboard thead {
-  /* Dégradé multicolore inspiré du site */
-  background: linear-gradient(
-    90deg,
-    var(--orange) 0%,
-    var(--yellow) 16%,
-    var(--green) 32%,
-    var(--blue) 48%,
-    var(--purple) 64%,
-    var(--pink) 80%,
-    var(--red) 100%
-  );
+  background-color: #0056b3;
 }
 
 .dbleaderboard th, .dbleaderboard td {
@@ -907,7 +990,7 @@ footer{
   font-weight: 600;
   letter-spacing: 0.5px;
   border-bottom: 2px solid rgba(255,255,255,0.08);
-  background: transparent;
+  background-color: #0056b3;
 }
 
 .dbleaderboard tbody tr {
@@ -916,11 +999,11 @@ footer{
 }
 
 .dbleaderboard tbody tr:nth-child(even) {
-  background: rgba(77, 138, 255, 0.07);
+  background: rgba(77, 138, 255, 0.07); /* var(--blue) */
 }
 
 .dbleaderboard tbody tr:hover {
-  background: rgba(255, 100, 249, 0.10);
+  background: rgba(255, 100, 249, 0.10); /* var(--pink) */
 }
 
 .dbleaderboard td {
@@ -976,17 +1059,7 @@ footer{
 
 }
 
-#connexion-main {
-  background-image: 
-    radial-gradient(at 30% 70%, rgba(1, 18, 41, 0.5) 0, transparent 50%),
-    radial-gradient(at 90% 10%, rgba(1, 41, 11, 0.5) 0, transparent 50%),
-    radial-gradient(at 90% 40%, rgba(119, 34, 115, 0.6) 0, transparent 50%),
-    radial-gradient(at 85% 85%, #110a58b0 0, rgba(31, 21, 88, 0.3) 50%),
-    radial-gradient(at 60% 90%, rgba(20, 40, 80, 0.7) 0, transparent 50%),
-    radial-gradient(at 20% 90%, #34578b 0, transparent 50%),
-    radial-gradient(at 75% 10%, #102840 0, transparent 50%),
-    radial-gradient(at 10% 20%, rgba(7, 20, 103, 0.8) 0, transparent 50%);
-}
+
 
 /*Dashboard.php*/
 #Dashboard {
@@ -994,8 +1067,8 @@ footer{
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 80px;
+  justify-content: center; 
+  padding: 40px 20px 40px;
   position: relative;
   z-index: 1;
   backdrop-filter: blur(18px);
@@ -1005,8 +1078,8 @@ footer{
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: 80vh;
+  align-items: center; 
+  min-height: auto;
   position: relative;
 }
 
@@ -1031,7 +1104,7 @@ footer{
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Space Grotesk', 'Poppins', Arial, sans-serif;
+  font-family: 'Space Grotesk';
 }
 
 .dashboard-box h2 {
@@ -1090,7 +1163,7 @@ footer{
   color: #fff;
   transform: translateY(-50%);
   pointer-events: none;
-  transition: 0.5s;
+  transition: 0.1s;
   opacity: 0.8;
 }
 
@@ -1101,7 +1174,9 @@ footer{
   color: white;
   opacity: 1;
 }
-
+#connexion-main .input-box input:not(:placeholder-shown) ~ label {
+  top: -10px;
+}
 .dashboard-box button[type="submit"],
 .dashboard-box form[action="logout.php"] button {
   width: 100%;
@@ -1150,6 +1225,8 @@ footer{
     border-width: 4px;
   }
 }
+
+
 .ChangeProfilePicture{
 text-align:center; color:white; font-size:0.95em;
 }
@@ -1158,4 +1235,114 @@ text-align:center; color:white; font-size:0.95em;
 }
 .profile-photo{
 display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;
+}
+
+.dbleaderboard-gradient-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 60px auto 40px auto;
+  z-index: 1;
+  border-radius: 18px;
+  /* Bordure RGB animée */
+  border: 4px solid transparent;
+  background:
+    linear-gradient(var(--card-background, #1c1f2b), var(--card-background, #1c1f2b)) padding-box,
+    conic-gradient(from var(--angle), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red)) border-box;
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+  animation: spin 3s linear infinite;
+  box-sizing: border-box;
+}
+
+.dbleaderboard-container {
+  position: relative;
+  z-index: 2;
+  background: var(--card-background, #1c1f2b);
+  border-radius: 14px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18);
+  font-family: 'Space Grotesk', 'Poppins', Arial, sans-serif;
+  margin: 0 auto;
+  /* Pour éviter que le halo ne déborde à l'intérieur */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* HALO animé autour du leaderboard */
+.dbleaderboard-gradient-wrapper::before,
+.dbleaderboard-gradient-wrapper::after {
+  z-index: -1;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  padding: 8px;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(from var(--angle), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
+  border-radius: 22px;
+  animation: spin 3s linear infinite;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.dbleaderboard-gradient-wrapper::before {
+  filter: blur(1.2rem);
+  opacity: 0.45;
+}
+
+.dbleaderboard-gradient-wrapper::after {
+  filter: blur(2rem);
+  opacity: 0.18;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dbleaderboard-gradient-wrapper,
+  .dbleaderboard-container {
+    max-width: 98vw;
+    width: 98vw;
+    padding: 0;
+  }
+  .dbleaderboard-gradient-wrapper::before,
+  .dbleaderboard-gradient-wrapper::after {
+    padding: 3px;
+    border-radius: 14px;
+  }
+  .dbleaderboard-gradient-wrapper::before {
+    filter: blur(0.7rem);
+  }
+  .dbleaderboard-gradient-wrapper::after {
+    filter: blur(1.1rem);
+  }
+}
+
+#leaderboard-main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.error{
+  font-weight: bold;
+  color: var(--red);
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.success{
+  font-weight: bold;
+  color: var(--green);
+  text-align: center;
+  margin-bottom: 1em;
 }

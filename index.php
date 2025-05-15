@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
     </head>
 <body>
-    <div class='cursor' id="cursor"></div>
     <header>
         <?php include 'php/header1.php'; ?>
     </header>
+    <div class='cursor' id="cursor"></div>
     <main id="index">
         <div>
             <button onclick="window.location.href='play.php';">Get Started</button>
-            <a><img src="icons/double-arrow-white.png" id="scroll-icon"></a>
+            <a href="#"><img src="icons/double-arrow-white.png" id="scroll-icon"></a>
         </div>
    
         <div id="ancre-scroll">

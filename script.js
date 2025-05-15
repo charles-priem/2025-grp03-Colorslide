@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+
+
 // Curseur personnalisé 
 var cursor = document.getElementById("cursor");
 document.body.addEventListener("mousemove", function(e) {
@@ -38,19 +40,8 @@ document.body.addEventListener("mousemove", function(e) {
     cursor.style.top = e.clientY + "px";
 });
 
-// Grossissement du bouton au survol
-document.addEventListener('DOMContentLoaded', function () {
-  const button = document.querySelector('#index button'); 
 
-  button.addEventListener('mouseenter', function () {
-    button.style.transform = 'scale(1.05)'; 
-    button.style.transition = 'transform 0.3s ease'; 
-  });
 
-  button.addEventListener('mouseleave', function () {
-    button.style.transform = 'scale(1)';
-  });
-});
 
 // Scroll vers le deuxième div au clic sur l'icône
 document.addEventListener('DOMContentLoaded', function () {
@@ -63,8 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-
-// Menu dropdown leaderboard
 
 
 
