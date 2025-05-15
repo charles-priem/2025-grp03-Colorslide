@@ -24,20 +24,23 @@
         <div class="card-container">
             <div class="card-wrapper">
                 <div class="card">
-                    <h2>Card 1</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <img src="videos/Deplacements.gif" alt="Card Image">
+                    <h2>Movement</h2>
+                    <p>The player can move up, down, left, or right, and keeps sliding in that direction until hitting a wall. As he moves, he paints the floor ; the goal is to paint every tile in the maze.</p>
                 </div>
             </div>  
             <div class="card-wrapper">
                 <div class="card">
-                    <h2>Card 2</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <img src="videos/Hole.gif" alt="Card Image">
+                    <h2>Holes</h2>
+                    <p>Holes are traps in the maze. If the player slides into one, he falls and die, forcing a restart. Players must avoid holes by planning their moves carefully.</p>
                 </div>
             </div>
             <div class="card-wrapper">
                 <div class="card">
-                    <h2>Card 3</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <img src="videos/TP.gif" alt="Card Image">
+                    <h2>Teleporters</h2>
+                    <p>Teleporters come in pairs and instantly move the player from one to the other. When the player slides into a teleporter, he appears at its linked exit and keep moving in the same direction.</p>
                 </div>
             </div>
         </div>
