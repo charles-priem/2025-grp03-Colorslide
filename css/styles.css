@@ -43,6 +43,12 @@ h1{
     --input-focus: var(--accent);
 }
 
+
+header img {
+  width: 120px;         
+  height: 120px;        
+  
+}
 body{
   background-color: var(--blue-background);
   max-width: 100vw;
@@ -75,7 +81,7 @@ header{
     top: 0;
     left: 0;
     width: 100%;
-    padding: 20px 8%;
+    padding: 20px 3%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -240,9 +246,9 @@ nav a{
   grid-column: 1/4;
   display:flex;
   justify-content: space-around;
+  margin-bottom:5em;
   z-index:0;
   position: relative;
-  padding-bottom:7em;
 }
 
 #index .card:first-of-type{
@@ -273,6 +279,7 @@ nav a{
   overflow: hidden;
   height: 100%;
 }
+
 
 #index .card p{
   line-height: 1.5em;
@@ -310,8 +317,8 @@ nav a{
 }
 
 #index .card-wrapper::after, #index .card-wrapper::before {
-  max-width: 400px;
-  z-index:-1;
+  max-width:400px;
+;  z-index:-1;
   content: '';
   position: absolute;
   width: 100%;
@@ -323,7 +330,6 @@ nav a{
   background: conic-gradient(from var(--angle), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   border-radius: 10px;
   animation: 3s spin linear infinite;
-  opacity: 0;
   transition: transform 0.3s ease, opacity 0.3s ease; /* Transition fluide */
   transform: translate(-50%, -50%) scale(1); /* Agrandit légèrement l'after */
   opacity: 0.5; /* Rend l'after visible */
@@ -376,7 +382,6 @@ footer{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index:100;
   font-family: 'Space Grotesk';
 }
 
@@ -384,53 +389,60 @@ footer{
 
 /*Partie Mirina*/
 
-/*à vérifier si ca s'applique */
-#connexion-main{
-  margin: 0;
-  padding: 0 !important;
-  box-sizing: border-box;
-  font-family: 'Space Grotesk';
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  width: 100vw;
-  position: relative;
-  z-index: 1;
-  backdrop-filter: blur(18px); 
-}
-
-#connexion-main h2{
-  padding-bottom: 1em;
-}
-
 /* Styles pour la vidéo de fond */
 .background-clip {
   position: fixed;
   top: 0; left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   object-fit: cover;
   z-index: -100;
   pointer-events: none;
 }
 
+html, body.connexion {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Space Grotesk', sans-serif; /* Ajout d'un fallback générique */
+}
+*, *::before, *::after { /* Héritage du box-sizing est une bonne pratique */
+  box-sizing: border-box;
+}
+
+/*à vérifier si ca s'applique */
+#connexion-main{
+  margin-bottom: 0;
+ padding-bottom: 100px;
+  box-sizing: border-box;
+  font-family: 'Space Grotesk';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  max-width: 100vw;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(18px); 
+   
+}
+
+#connexion-main h2{
+  padding-bottom: 1em;
+}
+
+
 #connexion-main section {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh;
 }
 
-#connexion-main .form-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
+
+
+.login-box h2{
+  padding-top:1em;
 }
 
 #connexion-main .login-box {
@@ -442,15 +454,16 @@ footer{
   background: rgba(255,255,255,0.05);
   border: 2px solid rgba(255,255,255,0.2);
   border-radius: 20px;
-  padding: 30px 25px ;
   box-sizing: border-box;
   box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  padding: 30px 25px ;
   display: flex;
   flex-direction: column;
   justify-content: center;
   transition: transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.5s;
   opacity: 1;
   z-index: 10;
+  margin-bottom: 2em;
   pointer-events: auto;
 }
 
@@ -458,14 +471,19 @@ footer{
   max-height: 30em;
 }
 
+.login-box p{
+  margin-bottom: 1em;
+}
+
+
 #register-box{
-  max-height: 40em;
+  max-height: 35em;
 }
 
 .no-anim .login-box,
 .no-anim #register-box,
 .no-anim #login-box {
-  transition: none !important;
+  transition: none ;
 }
 
 #connexion-main .login-box.slide-out-left {
@@ -570,6 +588,7 @@ body.connexion h2 {
   font-size: 1em;
   font-weight: 500;
 }
+
 #connexion-main button:hover {
   background-color: #0056b3;
 }
@@ -588,25 +607,100 @@ body.connexion h2 {
 #connexion-main .register-link p a:hover {
   text-decoration: underline;
 }
+#connexion-main .form-wrapper {
+  padding-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  overflow: visible;
+  
+}
 
-/* Responsive */
+/*testtt*/
+/* Pour les téléphones de taille moyenne (ex: 600px et moins) */
 @media (max-width: 600px) {
-  #connexion-main .login-box {
-    max-width: 98vw;
-    min-width: 0;
-    padding: 18px 8px;
+  #connexion-main {
+    padding-left: 10px; /* Encore moins d'espace sur les côtés */
+    padding-right: 10px;
+    /* Si tu avais un padding-bottom important, tu pourrais le réduire ici */
+    /* padding-bottom: 50px; */
   }
-  #connexion-main .input-box {
-    min-width: 0;
-  }
-  #connexion-main section,
+
   #connexion-main .form-wrapper {
-    height: 100vh;
-    min-height: 100vh;
-    padding: 0;
+    max-width: 90%; /* Le formulaire prend 90% de la largeur disponible */
+  }
+
+  #connexion-main .login-box {
+    padding: 20px 15px; /* Réduire encore le padding interne du formulaire */
+    border-radius: 15px; /* Optionnel: réduire le radius pour petits écrans */
+  }
+
+  #connexion-main .input-box {
+    margin: 20px 0;
+  }
+
+  #connexion-main h2 {
+    font-size: 1.6em;
+    padding-bottom: 0.8em; /* Réduire l'espace sous le titre */
+  }
+
+  #connexion-main button {
+    height: 38px;
+    font-size: 0.95em;
+  }
+
+  #connexion-main .remember-forgot {
+    font-size: .85em; /* Rendre ce texte un peu plus petit */
+    flex-direction: column; /* Optionnel: empiler les options si elles sont trop serrées */
+    align-items: flex-start;
+  }
+  #connexion-main .remember-forgot label {
+    margin-bottom: 8px; /* Espace entre les options empilées */
+  }
+
+  #connexion-main .register-link {
+    font-size: .85em;
+    margin: 20px 0 5px;
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Pour augmenter la taille du formulaire sur mobile ET sur tablette */
+@media (max-width: 900px) {
+  #connexion-main .login-box {
+    max-width: 98vw;
+    min-width: 0;
+    width: 98vw;
+    padding: 30px 25px;
+    margin: 0 auto;
+    border-radius: 18px;
+  }
+  #connexion-main .input-box {
+    width: 100%;
+    min-width: 0;
+    margin: 24px 0;
+  }
+}
 #play .game-wrapper{
   height:calc(100vh - 150px);
   margin-top:90px;
@@ -752,35 +846,9 @@ body.connexion h2 {
   height: 100%;
   font-size: 1em;
 }
-/*style bouton sign in sign up*/
-.nav-button .btn{
-  width: 100px;
-  height: 40px;
-  font-weight: 500;
-  background: rgba(232, 203, 234);
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: .3s ease;
-  
-}
-.btn:hover{
-  background: rgba(231, 217, 231);
-}
 
-/*pour  espacer les boutons*/
-#registerBtn{
-  margin-left: 20px;
-}
 
-.btn.white-btn{
-  background: rgba(245, 232, 245);
-  
-}
 
-.btn.btn.white-btn:hover{
-  background:rgba(231, 217, 231);
-}
 
 
 
@@ -795,7 +863,7 @@ body.connexion h2 {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  width: 100vw;
+  max-width: 100vw;
   position: relative;
   z-index: 1;
   backdrop-filter: blur(18px);
@@ -803,7 +871,8 @@ body.connexion h2 {
 
 
 #contact form {
-  position: absolute;
+  position: relative;
+  margin-top: 100px !important;
   margin: auto;
   width: 100%;
   max-width: 400px;
@@ -942,13 +1011,10 @@ body.connexion h2 {
 /* Contact Responsive */
 @media (max-width: 900px) {
   #contact {
-    padding: 40px 5vw 20px 5vw;
     align-items: flex-start;
+    margin-inline:auto;
   }
-  #contact form {
-    max-width: 98vw;
-    padding: 18px 8px;
-  }
+
 }
 
 @media (max-width: 600px) {
@@ -957,9 +1023,8 @@ body.connexion h2 {
     min-height: 100vh;
     align-items: flex-start;
   }
-  #contact form {
-    max-width: 100vw;
-    padding: 12px 2vw;
+  #contact form{
+    margin-inline: 15px;
   }
   #contact .input-box {
     width: 100%;
@@ -1057,6 +1122,7 @@ body.connexion h2 {
 
   #index .card-container{
     flex-direction:column;
+    margin-bottom:2em;
   }
 
   #index .card-wrapper, #index .card-wrapper::after, #index .card-wrapper::before{

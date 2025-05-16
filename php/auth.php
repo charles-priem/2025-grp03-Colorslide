@@ -174,7 +174,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </section>
 </main>
-
+<footer>
+    <?php require_once "footer.php"; ?>
+</footer>
 <script>
 const loginBox = document.getElementById('login-box');
 const registerBox = document.getElementById('register-box');
@@ -228,5 +230,6 @@ goLogin?.addEventListener('click', e => {
     loginBox.classList.add('slide-in-left');
 });
 </script>
+
 </body>
 </html>
