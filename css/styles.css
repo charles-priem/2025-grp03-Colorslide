@@ -61,6 +61,9 @@ body{
   radial-gradient(at 20% 90%, #051c3f 0, transparent 50%),
   radial-gradient(at 75% 10%, #102840 0, transparent 50%),
   radial-gradient(at 10% 20%, rgba(70, 18, 65, 0.8) 0, transparent 50%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 main{
@@ -109,6 +112,10 @@ nav a{
   transition: background-color .5s ease-in-out;
   bottom: 0px;
   transform: translateX(-100%) scalex(0);
+}
+
+.dropdown_menu .linkanimation::before{
+  height:2px;
 }
 
 .linkanimation:not(.animation-ready)::before {
@@ -246,6 +253,7 @@ nav a{
   grid-column: 1/4;
   display:flex;
   justify-content: space-around;
+  align-items: stretch;
   margin-bottom:5em;
   z-index:0;
   position: relative;
@@ -268,9 +276,9 @@ nav a{
 
 #index .card{
   z-index:2;
-  margin: 0 auto;
   padding: 2em;
-  max-width: 400px;
+  /* max-width: 400px; */
+  margin:auto;
   background: var(--blue-background);
   text-align: center;
   border-radius: 10px;
@@ -299,8 +307,12 @@ nav a{
 }
 
 .card-wrapper {
+  max-width: 400px;
   position: relative;
+  flex: 1 1 0;
   display: inline-block;
+  padding: 3px !important;
+    margin: 0 auto;
   transform: translateZ(0);
   margin:0 50px;
   transition: transform 0.3s ease, filter 0.3s ease; /* Transition fluide pour l'effet */
@@ -317,15 +329,15 @@ nav a{
 }
 
 #index .card-wrapper::after, #index .card-wrapper::before {
-  max-width:400px;
-;  z-index:-1;
+  /* max-width:400px; */
+  z-index:-1;
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
   top:50%;
   left:50%;
-  padding:3px;
+  padding:3px !important;
   transform: translate(-50%, -50%);
   background: conic-gradient(from var(--angle), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple), var(--pink), var(--red));
   border-radius: 10px;
@@ -377,6 +389,7 @@ footer{
   max-height: 60px;
   top: 0;
   left: 0;
+  z-index: 5;
   width: 100%;
   padding: 20px 8%;
   display: flex;
@@ -404,16 +417,14 @@ html, body.connexion {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Space Grotesk', sans-serif; /* Ajout d'un fallback générique */
+  font-family: 'Space Grotesk', sans-serif;
 }
-*, *::before, *::after { /* Héritage du box-sizing est une bonne pratique */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-/*à vérifier si ca s'applique */
 #connexion-main{
   margin-bottom: 0;
- padding-bottom: 100px;
   box-sizing: border-box;
   font-family: 'Space Grotesk';
   display: flex;
@@ -424,10 +435,10 @@ html, body.connexion {
   position: relative;
   z-index: 1;
   backdrop-filter: blur(18px); 
-   
+  max-height: 667px !important;
 }
 
-#connexion-main h2{
+#connexion-main h2, #contact form h2{
   padding-bottom: 1em;
 }
 
@@ -441,14 +452,14 @@ html, body.connexion {
 
 
 
-.login-box h2{
+.login-box h2, #contact form h2{
   padding-top:1em;
 }
 
 #connexion-main .login-box {
   position:absolute;
-  margin: auto;
   width: 100%;
+  height:auto;
   max-width: 400px;
   min-width: 300px;
   background: rgba(255,255,255,0.05);
@@ -463,7 +474,6 @@ html, body.connexion {
   transition: transform 0.5s cubic-bezier(.77,0,.18,1), opacity 0.5s;
   opacity: 1;
   z-index: 10;
-  margin-bottom: 2em;
   pointer-events: auto;
 }
 
@@ -509,7 +519,7 @@ html, body.connexion {
   z-index: 2;
 }
 
-body.connexion h2 {
+body.connexion h2, #contact form h2 {
   font-size: 2em;
   text-align: center;
 }
@@ -525,6 +535,7 @@ body.connexion h2 {
   position: absolute;
   top: 50%;
   left: 5px;
+  font-family: 'Space Grotesk';
   transform: translateY(-50%);
   font-size: 1em;
   color: #fff;
@@ -557,7 +568,7 @@ body.connexion h2 {
 }
 
 #connexion-main .remember-forgot {
-  margin: -15px 0 15px;
+  margin: -5px 0 15px;
   font-size: .9em;
   color: white;
   display: flex;
@@ -608,34 +619,42 @@ body.connexion h2 {
   text-decoration: underline;
 }
 #connexion-main .form-wrapper {
-  padding-top: 100px;
   display: flex;
   justify-content: center;
   align-items:center;
   width: 100vw;
-  min-height: 100vh;
+  max-height: 100vh;
   position: relative;
   overflow: visible;
   
 }
 
-/*testtt*/
-/* Pour les téléphones de taille moyenne (ex: 600px et moins) */
+/* Pour petits écrans */
 @media (max-width: 600px) {
   #connexion-main {
-    padding-left: 10px; /* Encore moins d'espace sur les côtés */
+    padding-left: 10px;
     padding-right: 10px;
-    /* Si tu avais un padding-bottom important, tu pourrais le réduire ici */
-    /* padding-bottom: 50px; */
+  }
+
+
+  #connexion-main .login-box {
+    min-width: 0;
+    padding: 30px 25px;
+    margin: 0 auto;
+    border-radius: 18px;
+  }
+  #connexion-main .input-box {
+    width: 100%;
+    min-width: 0;
+    margin: 24px 0;
   }
 
   #connexion-main .form-wrapper {
-    max-width: 90%; /* Le formulaire prend 90% de la largeur disponible */
+    max-width: 90%; 
   }
 
   #connexion-main .login-box {
-    padding: 20px 15px; /* Réduire encore le padding interne du formulaire */
-    border-radius: 15px; /* Optionnel: réduire le radius pour petits écrans */
+    padding: 20px 15px; 
   }
 
   #connexion-main .input-box {
@@ -654,7 +673,7 @@ body.connexion h2 {
 
   #connexion-main .remember-forgot {
     font-size: .85em; /* Rendre ce texte un peu plus petit */
-    flex-direction: column; /* Optionnel: empiler les options si elles sont trop serrées */
+    flex-direction: column; 
     align-items: flex-start;
   }
   #connexion-main .remember-forgot label {
@@ -668,39 +687,6 @@ body.connexion h2 {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Pour augmenter la taille du formulaire sur mobile ET sur tablette */
-@media (max-width: 900px) {
-  #connexion-main .login-box {
-    max-width: 98vw;
-    min-width: 0;
-    width: 98vw;
-    padding: 30px 25px;
-    margin: 0 auto;
-    border-radius: 18px;
-  }
-  #connexion-main .input-box {
-    width: 100%;
-    min-width: 0;
-    margin: 24px 0;
-  }
-}
 #play .game-wrapper{
   height:calc(100vh - 150px);
   margin-top:90px;
@@ -753,7 +739,7 @@ body.connexion h2 {
 }
 
     /* Le dropdown menu */
-    .dropdown {
+    #play .dropdown {
       position: fixed;
       top: 20%;
       right: -250px;
@@ -769,57 +755,57 @@ body.connexion h2 {
       transform: translateY(0);
       transition: right 0.3s ease, opacity 0.3s ease; /* Transition fluide */
     }
-    .dropdown.open {
+    #play .dropdown.open {
     right: 0; /* Affiche le menu */
     opacity: 1;
 
 }
 
-    .dropdown table {
+    #play .dropdown table {
     width: 100%; /* Le tableau occupe toute la largeur du menu */
     border-collapse: collapse; /* Supprime les espaces entre les bordures */
     text-align: left; /* Aligne le texte à gauche */
     font-size: 0.9rem;
 }
 
-.dropdown th, .dropdown td {
+#play .dropdown th, #play .dropdown td {
     padding: 10px; /* Ajoute de l'espace à l'intérieur des cellules */
     border-bottom: 1px solid #eee; /* Ligne de séparation entre les lignes */
     color:var(--card-background);
     text-align: center;
 }
 
-.dropdown th {
+#play.dropdown th {
     background-color: #f0f0f0; /* Couleur de fond pour l'en-tête */
     font-weight: bold;
     text-align: center; /* Centre le texte dans l'en-tête */
 }
 
-.dropdown tr:nth-child(even) {
+#play .dropdown tr:nth-child(even) {
     background-color: #f9f9f9; /* Couleur de fond pour les lignes paires */
 }
 
-.dropdown tr:hover {
+#play .dropdown tr:hover {
     background-color: #e6e6e6; /* Couleur de fond au survol */
 }
 
-.dropdown td:first-child, .dropdown td:nth-child(2) {
+#play .dropdown td:first-child, #play .dropdown td:nth-child(2) {
     text-align: center; /* Centre les icônes de position */
 }
 
 
-.dropdown tbody{
+#play .dropdown tbody{
   border-bottom-left-radius: 8px;
 }
-.dropdown table{
+#play .dropdown table{
   border-bottom-left-radius: 8px;
 }
 
-.dropdown table tbody tr:last-child td:first-child{
+#play .dropdown table tbody tr:last-child td:first-child{
   border-bottom-left-radius:8px;
 }
 
-.dropdown tr:last-child td:first-child{
+#play .dropdown tr:last-child td:first-child{
   border-bottom:none;
 }
 
@@ -839,7 +825,6 @@ body.connexion h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
   color: white; /* assure la visibilité */
   background: transparent; /* ou une couleur si besoin */
   width: 100%;
@@ -872,8 +857,6 @@ body.connexion h2 {
 
 #contact form {
   position: relative;
-  margin-top: 100px !important;
-  margin: auto;
   width: 100%;
   max-width: 400px;
   min-width: 300px;
@@ -895,8 +878,6 @@ body.connexion h2 {
 
 #contact form h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 2em;
   color: white;
 }
 
@@ -1011,18 +992,13 @@ body.connexion h2 {
 /* Contact Responsive */
 @media (max-width: 900px) {
   #contact {
-    align-items: flex-start;
     margin-inline:auto;
   }
 
 }
 
 @media (max-width: 600px) {
-  #contact {
-    padding: 20px 2vw 10px 2vw;
-    min-height: 100vh;
-    align-items: flex-start;
-  }
+
   #contact form{
     margin-inline: 15px;
   }
@@ -1039,6 +1015,8 @@ body.connexion h2 {
     margin-bottom: 10px;
   }
 }
+
+
 /* Leaderboard élégant, sans animation ni gradient sur le thead, et sans style pour les boutons supprimer */
 
 
@@ -1284,13 +1262,6 @@ body.connexion h2 {
 }
 
 @media (max-width: 600px) {
-  .dashboard-box {
-    padding: 18px 8px 16px 8px;
-    max-width: 98vw;
-  }
-  #Dashboard {
-    padding-top: 60px;
-  }
   .dashboard-box .profile-avatar-wrapper,
   .dashboard-box .dashboard-avatar-center {
     width: 100%;
@@ -1305,13 +1276,23 @@ body.connexion h2 {
 
 
 .ChangeProfilePicture{
-text-align:center; color:white; font-size:0.95em;
+  text-align:center; 
+  color:white; 
+  font-size:0.95em;
 }
 #avatar-upload{
   display: none;
 }
 .profile-photo{
-display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  margin-bottom: 1em;
+}
+
+.profile-photo img{
+  margin-bottom:1em;
+  margin-top:1em;
 }
 
 .dbleaderboard-gradient-wrapper {
@@ -1422,4 +1403,72 @@ display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;
   color: var(--green);
   text-align: center;
   margin-bottom: 1em;
+}
+
+
+/* Bouton menu burger */
+.menu-burger {
+  display: none;
+  position: absolute;
+  top: 13px;
+  right: 32px;
+  z-index: 1201;
+  cursor: pointer;
+}
+.menu-burger img {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+/* Menu déroulant mobile */
+.menu_toggle {
+  display: none;
+}
+.dropdown_menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--blue-background, #000e2c);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.2rem;
+  z-index: 1200;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(.77,0,.18,1);
+  opacity: 0.98;
+  pointer-events: none;
+}
+.menu_toggle:checked ~ .dropdown_menu {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.dropdown_menu a {
+  color: white;
+  font-size: 2rem;
+  text-decoration: none;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: color 0.2s;
+  margin-left: 0 !important;
+}
+
+/* Responsive : cacher la nav classique et afficher le burger */
+@media (max-width: 600px) {
+  nav > a, nav > .linkanimation, nav > ul, nav > div:not(.dropdown_menu):not(.menu-burger) {
+    display: none !important;
+  }
+  .menu-burger {
+    display: block !important;
+  }
+  .dropdown_menu {
+    display: flex;
+  }
+}
+@media (min-width: 601px) {
+  .dropdown_menu, .menu-burger {
+    display: none !important;
+  }
 }

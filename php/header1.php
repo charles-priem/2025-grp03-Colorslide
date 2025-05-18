@@ -10,6 +10,19 @@
             <?php else: ?>
                 <a href="/2025-grp03/php/auth.php" class="linkanimation">Sign in</a>      
              <?php endif; ?>
-            <script src="/2025-grp03/script.js"></script>
+             <input type="checkbox" id="menu_toggle" class="menu_toggle" style="display:none;">
+             <label for="menu_toggle" class="menu-burger">
+            <img src="/2025-grp03/icons/menu.png" alt="Menu" />
+            </label>
+            <div class="dropdown_menu">
+            <a class="linkanimation" href="/2025-grp03/php/leaderboard.php">Leaderboard</a>
+            <a class="linkanimation" href="/2025-grp03/php/contact.php">Contact</a>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a class="linkanimation" href="/2025-grp03/php/dashboard.php">Profile</a>
+            <?php else: ?>
+                <a class="linkanimation" href="/2025-grp03/php/auth.php">Sign in</a>
+            <?php endif; ?>
+            </div>
         </nav>
+         <script src="/2025-grp03/script.js"></script>
         

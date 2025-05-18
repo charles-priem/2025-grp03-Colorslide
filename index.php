@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
     <link rel="icon" href="images/Logo.png" type="image/x-icon">
 </head>
+
+<script>
+    // Script du cusrseur custom
+  document.addEventListener("DOMContentLoaded", function() {
+    var cursor = document.getElementById("cursor");
+    document.body.addEventListener("mousemove", function(e) {
+      cursor.style.left = e.clientX + "px";
+      cursor.style.top = e.clientY + "px";
+    });
+  });
+</script>
+
 <body>
     <header>
         <?php include 'php/header1.php'; ?>

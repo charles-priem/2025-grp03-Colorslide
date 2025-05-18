@@ -32,17 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
-// Curseur personnalisé 
-var cursor = document.getElementById("cursor");
-document.body.addEventListener("mousemove", function(e) {
-  cursor.style.left = e.clientX + "px",
-    cursor.style.top = e.clientY + "px";
-});
-
-
-
-
 // Scroll vers le deuxième div au clic sur l'icône
 document.addEventListener('DOMContentLoaded', function () {
   const scrollIcon = document.getElementById('scroll-icon'); // Sélectionne l'icône
@@ -52,7 +41,18 @@ document.addEventListener('DOMContentLoaded', function () {
   scrollIcon.addEventListener('click', function () {
     secondDiv.scrollIntoView({ behavior: 'smooth' }); // Défilement fluide vers le deuxième div
   });
+
+  window.addEventListener('resize', function() {
+  const menuToggle = document.getElementById('menu_toggle');
+  if (window.innerWidth > 600 && menuToggle && menuToggle.checked) {
+    menuToggle.checked = false;
+  }
 });
+});
+
+
+
+
 
 
 

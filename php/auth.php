@@ -15,10 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($username)) {
             $errors['username'] = "Username is required.";
         }
-        if (empty($email)) {
+        elseif (empty($email)) {
             $errors['email'] = "Email is required.";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Invalid email address.";
+            $errors['email'] = "Invalid email address";
         } else {
             // Vérifie si l'email existe déjà
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
@@ -56,11 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (empty($email)) {
             $errors['email'] = "Email is required.";
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Invalid email address.";
-        }
-
-        if (empty($pwd)) {
-            $errors['password'] = "Password is required.";
+            $errors['email'] = "Invalid email address";
+        } elseif (empty($pwd)) {
+            $errors['password'] = "Password is required";
         }
 
         if (empty($errors)) {
@@ -74,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 header('Location: dashboard.php');
                 exit;
             } else {
-                $errors['global'] = "Incorrect credentials.";
+                $errors['global'] = "Incorrect credentials";
             }
         }
     }
@@ -100,26 +98,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="login-box" id="login-box">
                 <form action="" method="post" autocomplete="off">
                     <h2>Sign in</h2>
-                    <?php if (isset($errors['global']) && ($_POST['action'] ?? '') === 'login'): ?>
-                        <p class="error"><?= $errors['global'] ?></p>
-                    <?php endif; ?>
+
+                    <?php 
+                    if(($_POST['action'] ?? '') === 'login'):
+                        if (isset($errors['global'])):
+                            echo'<p class="error">' . $errors['global'] . '</p>';
+
+                        elseif (isset($errors['email'])): 
+                            echo'<p class="error">' . $errors['email'] . '</p>';
+
+                        elseif (isset($errors['password'])): 
+                            echo'<p class="error">' . $errors['password'] . '</p>';
+                        endif;
+                    endif;
+                    ?>
+
                     <input type="hidden" name="action" value="login">
                     <div class="input-box">
                         <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
                         <input type="email" name="email" placeholder="" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                         <label>Email</label>
                     </div>
-                    <?php if (isset($errors['email']) && ($_POST['action'] ?? '') === 'login'): ?>
-                        <p class="error"><?= $errors['email'] ?></p>
-                    <?php endif; ?>
                     <div class="input-box">
                         <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
                         <input type="password" name="password" placeholder="" required>
                         <label>Password</label>
                     </div>
-                    <?php if (isset($errors['password']) && ($_POST['action'] ?? '') === 'login'): ?>
-                        <p class="error"><?= $errors['password'] ?></p>
-                    <?php endif; ?>
                     <div class="remember-forgot">
                         <label><input type="checkbox" name="remember">Remember me</label>
                         <a href="recovery.php">Forgot password?</a>
@@ -134,11 +138,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="login-box" id="register-box">
                 <form action="" method="post" autocomplete="off">
                     <h2>Register</h2>
-                    <?php if (isset($errors['global']) && ($_POST['action'] ?? '') === 'register'): ?>
-                        <p class="error"><?= $errors['global'] ?></p>
-                    <?php endif; ?>
-                    <?php if ($success): ?>
-                        <p class="success"><?= $success ?></p>
+                    <?php if (($_POST['action'] ?? '') === 'register'): ?>
+                        <?php
+                        if (isset($errors['global']))         echo '<p class="error">' . $errors['global'] . '</p>';
+                        elseif ($success)                     echo '<p class="success">' . $success . '</p>';
+                        elseif (isset($errors['username']))   echo '<p class="error">' . $errors['username'] . '</p>';
+                        elseif (isset($errors['email']))      echo '<p class="error">' . $errors['email'] . '</p>';
+                        elseif (isset($errors['password']))   echo '<p class="error">' . $errors['password'] . '</p>';
+                        ?>
                     <?php endif; ?>
                     <input type="hidden" name="action" value="register">
                     <div class="input-box">
@@ -146,25 +153,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <input type="text" name="username" placeholder="" required value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
                         <label>Username</label>
                     </div>
-                    <?php if (isset($errors['username']) && ($_POST['action'] ?? '') === 'register'): ?>
-                        <p class="error"><?= $errors['username'] ?></p>
-                    <?php endif; ?>
+
                     <div class="input-box">
                         <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
                         <input type="email" name="email" placeholder="" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                         <label>Email</label>
                     </div>
-                    <?php if (isset($errors['email']) && ($_POST['action'] ?? '') === 'register'): ?>
-                        <p class="error"><?= $errors['email'] ?></p>
-                    <?php endif; ?>
+
                     <div class="input-box">
                         <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
                         <input type="password" name="password" placeholder="" required>
                         <label>Password</label>
                     </div>
-                    <?php if (isset($errors['password']) && ($_POST['action'] ?? '') === 'register'): ?>
-                        <p class="error"><?= $errors['password'] ?></p>
-                    <?php endif; ?>
+
                     <button type="submit">Register</button>
                     <div class="register-link">
                         <p>Already have an account? <a href="#" id="show-login">Sign in</a></p>
