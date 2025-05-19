@@ -55,7 +55,7 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            z-index: 10;
+            z-index: 9;
             transition: transform 0.3s none;
             background-image: url("game/sprites/sprite.png");
             background-size: cover;
@@ -64,7 +64,7 @@
 
         .player.animating {
             position: fixed;
-            z-index: 1000;
+            z-index: 9;
         }
 
         .player.falling {
@@ -153,7 +153,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            /* Modifiez pas le z-index pitié */
+            z-index: 1099; 
             animation: popup-fade-in 0.3s;
             opacity: 0;
             transition: opacity 0.3s;
@@ -169,7 +170,7 @@
             position: relative;
             min-width: 320px;
             max-width: 95vw;
-            padding: 40px 32px 32px 32px;
+            padding:32px;
             border-radius: 18px;
             background: linear-gradient(135deg, #1c1f2b 0%, #232946 100%);
             color: #fff;
@@ -202,13 +203,13 @@
         .popup-content h2 {
             color: white;
             font-size: 2.1rem;
-            margin-bottom: 12px;
             letter-spacing: 1px;
         }
         .popup-content p {
             color: #fff;
             font-size: 1.2rem;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            margin-top: 20px;
         }
         .popup-content button {
             position: relative;
@@ -222,7 +223,7 @@
             font-weight: 700;
             cursor: pointer;
             z-index: 1;
-            box-shadow: 0 4px 24px 0 rgba(99,102,241,0.18), 0 1.5px 6px #06b6d4;
+            /* box-shadow: 0 4px 24px 0 rgba(99,102,241,0.18), 0 1.5px 6px #06b6d4; */
             overflow: hidden;
             transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
             margin-top: 12px;
@@ -230,9 +231,9 @@
         }       
 
         .popup-content button:hover {
-            background: linear-gradient(90deg, #06b6d4 0%, #6366f1 100%);
-            box-shadow: 0 0 32px 4px rgba(99,102,241,0.22);
-            transform: translateY(-2px) scale(1.04);
+            /* background: linear-gradient(90deg, #06b6d4 0%, #6366f1 100%); */
+            /* box-shadow: 0 0 32px 4px rgba(99,102,241,0.22); */
+            transform: scale(1.04);
         }
         .close {
             position: absolute;
@@ -241,7 +242,7 @@
             font-size: 28px;
             color: #64748b;
             cursor: pointer;
-            transition: color 0.2s, transform 0.1s;
+            transition: color 0.1s, transform 0.1s;
             z-index: 10;
         }
         .close:hover {
@@ -327,13 +328,12 @@
 <div id="win-popup" class="popup" style="display:none;">
     <div class="popup-content">
         <span id="close-popup" class="close">&times;</span>
-        <h2>Félicitations !</h2>
+        <h2>Congratulations !</h2>
         <p id="win-message"></p>
         <button onclick="closeWinPopup()">Fermer</button>
     </div>
 </div>
 
- </div>
         
 <script>
 
@@ -417,7 +417,7 @@ window.addEventListener('click', function (e) {
 
         function showWinPopup(moves) {
             const popup = document.getElementById('win-popup');
-            document.getElementById('win-message').textContent = `Vous avez rempli toute la grille en ${moves} mouvements !`;
+            document.getElementById('win-message').textContent = `You completed the level in ${moves} moves !`;
             popup.style.display = 'flex';
             setTimeout(() => popup.classList.add('show'), 10);
             gameEnded = true; // Empêche tout déplacement après victoire
@@ -841,6 +841,11 @@ window.addEventListener('click', function (e) {
                     isMoving = false;
                 }
             }
+            
+            function isDropdownMenuOpen() {
+                const menuToggle = document.getElementById('menu_toggle');
+                return menuToggle && menuToggle.checked;
+            }
 
             function checkWin() {
                 let NotVisited = playground.some(l => l.some(n => n === PATH));
@@ -857,6 +862,7 @@ window.addEventListener('click', function (e) {
             });
 
             document.addEventListener('keydown', (e) => {
+                if (isDropdownMenuOpen()) return;
                 switch (e.key) {
                     case 'ArrowUp': slide('up'); break;
                     case 'ArrowDown': slide('down'); break;
