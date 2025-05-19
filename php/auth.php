@@ -6,6 +6,15 @@ require_once __DIR__ . '/../mail/mail.php';
 $errors = [];
 $success = "";
 
+// Affichage du message de vérification de compte
+if (isset($_GET['verified'])) {
+    if ($_GET['verified'] == '1') {
+        $success = "Your account has been successfully verified. You can now log in.";
+    } else {
+        $errors['global'] = "Account verification failed or link already used.";
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // --- INSCRIPTION ---
     if (isset($_POST['action']) && $_POST['action'] === 'register') {
@@ -14,14 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $pwd = $_POST['password'] ?? '';
 
         // Vérifications de base
-        if (empty($username)) $errors['username'] = "Nom d'utilisateur requis";
-        if (empty($email)) $errors['email'] = "Email requis";
-        if (empty($pwd)) $errors['password'] = "Mot de passe requis";
+        if (empty($username)) $errors['username'] = "Username required";
+        if (empty($email)) $errors['email'] = "Email required";
+        if (empty($pwd)) $errors['password'] = "Password required";
 
         // Vérifier si l'email existe déjà
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        if ($stmt->fetch()) $errors['email'] = "Email déjà utilisé";
+        if ($stmt->fetch()) $errors['email'] = "Email already used";
 
         if (empty($errors)) {
             $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
@@ -87,6 +96,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="login-box" id="login-box">
                 <form action="" method="post" autocomplete="off">
                     <h2>Sign in</h2>
+
+                    <?php 
+                    // Affiche les messages globaux de succès ou d'erreur même hors POST
+                    if (!empty($success)) {
+                        echo '<p class="success">' . $success . '</p>';
+                        echo '<script>
+                            if (window.location.search.includes("verified=")) {
+                                const url = new URL(window.location);
+                                url.searchParams.delete("verified");
+                                window.history.replaceState({}, document.title, url.pathname + url.search);
+                            }
+                        </script>';
+                    } elseif (isset($errors['global']) && (!isset($_POST['action']) || $_POST['action'] !== 'login')) {
+                        // Affiche l'erreur globale seulement si ce n'est PAS un POST de login
+                        echo '<p class="error">' . $errors['global'] . '</p>';
+                        echo '<script>
+                            if (window.location.search.includes("verified=")) {
+                                const url = new URL(window.location);
+                                url.searchParams.delete("verified");
+                                window.history.replaceState({}, document.title, url.pathname + url.search);
+                            }
+                        </script>';
+                    }
+                    ?>
 
                     <?php 
                     if(($_POST['action'] ?? '') === 'login'):

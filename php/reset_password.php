@@ -64,12 +64,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <?php endif; ?>
                     <div class="input-box">
                         <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
-                        <input type="password" name="password" required>
+                        <input type="password" name="password" required placeholder="">
                         <label>Nouveau mot de passe</label>
                     </div>
                     <div class="input-box">
                         <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
-                        <input type="password" name="password2" required>
+                        <input type="password" name="password2" required placeholder="">
                         <label>Confirmer le mot de passe</label>
                     </div>
                     <button type="submit">Changer le mot de passe</button>

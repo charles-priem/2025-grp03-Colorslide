@@ -57,12 +57,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <?php endif; ?>
                     <div class="input-box">
                         <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
-                        <input type="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+                        <input type="email" name="email" placeholder="" value="<?= htmlspecialchars($email) ?>" required>
                         <label>Email</label>
                     </div>
                     <div class="input-box">
                         <span class="icon"><ion-icon name="key-outline"></ion-icon></span>
-                        <input type="text" name="code" required>
+                        <input type="text" name="code" required placeholder="">
                         <label>Code</label>
                     </div>
                     <button type="submit">Validate</button>

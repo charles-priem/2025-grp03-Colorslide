@@ -10,10 +10,16 @@ if ($email && $code) {
     $user = $stmt->fetch();
     if ($user) {
         $pdo->prepare("UPDATE users SET is_verified = 1, validation_code = NULL WHERE id = ?")->execute([$user['id']]);
-        echo "Votre compte a été validé. <a href='../auth.php'>Connectez-vous</a>";
+        // Redirection avec succès
+        header("Location: ../auth.php?verified=1");
+        exit;
     } else {
-        echo "Lien invalide ou déjà utilisé.";
+        // Redirection avec erreur
+        header("Location: ../auth.php?verified=0");
+        exit;
     }
 } else {
-    echo "Paramètres manquants.";
+    // Redirection avec erreur de paramètres
+    header("Location: ../auth.php?verified=0");
+    exit;
 }

@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     
                     <div class="input-box">
                         <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
-                        <input type="email" name="email" required>
+                        <input type="email" name="email" required placeholder="">
                         <label>Email</label>
                     </div>
                     <?php if ($success): ?>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -146,6 +144,110 @@
         .hole {
             background-color: red;
         }
+
+        /* Popup de victoire stylé RGB animé */
+        .popup {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(30, 41, 59, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: popup-fade-in 0.3s;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .popup.show {
+            opacity: 1;
+        }
+        @keyframes popup-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .popup-content {
+            position: relative;
+            min-width: 320px;
+            max-width: 95vw;
+            padding: 40px 32px 32px 32px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #1c1f2b 0%, #232946 100%);
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(30,41,59,0.25), 0 1.5px 6px #6366f1;
+            border: 4px solid transparent;
+            background-clip: padding-box, border-box;
+            background-origin: padding-box, border-box;
+            background-image:
+                linear-gradient(135deg, #1c1f2b 0%, #232946 100%),
+                conic-gradient(from var(--angle, 0deg), #FF6D1B, #FFEE55, #5BFF89, #4D8AFF, #6B5FFF, #FF64F9, #FF6565, #FF6D1B);
+            animation: spin 3s linear infinite, popup-content-bounce 0.4s;
+        }
+        .popup-content::before {
+            content: '';
+            position: absolute;
+            inset: -18px;
+            border-radius: 22px;
+            z-index: -1;
+            background: conic-gradient(from var(--angle, 0deg), #FF6D1B, #FFEE55, #5BFF89, #4D8AFF, #6B5FFF, #FF64F9, #FF6565, #FF6D1B);
+            filter: blur(1.5rem);
+            opacity: 0;
+            transition: opacity 0.25s; /* Retire le délai */
+            pointer-events: none;
+            animation: spin 3s linear infinite;
+        }
+        .popup.show .popup-content::before {
+            opacity: 0.45;
+        }
+        .popup-content h2 {
+            color: white;
+            font-size: 2.1rem;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .popup-content p {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+        }
+        .popup-content button {
+            position: relative;
+            background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 48px;
+            font-size: 1.2rem;
+            font-family: 'Space Grotesk', Arial, sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1;
+            box-shadow: 0 4px 24px 0 rgba(99,102,241,0.18), 0 1.5px 6px #06b6d4;
+            overflow: hidden;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+            margin-top: 12px;
+            letter-spacing: 0.5px;
+        }       
+
+        .popup-content button:hover {
+            background: linear-gradient(90deg, #06b6d4 0%, #6366f1 100%);
+            box-shadow: 0 0 32px 4px rgba(99,102,241,0.22);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .close {
+            position: absolute;
+            right: 18px;
+            top: 14px;
+            font-size: 28px;
+            color: #64748b;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.1s;
+            z-index: 10;
+        }
+        .close:hover {
+            color: #FF6D1B;
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body>
@@ -221,6 +323,16 @@
         
 </div>
 
+<!-- Popup de victoire -->
+<div id="win-popup" class="popup" style="display:none;">
+    <div class="popup-content">
+        <span id="close-popup" class="close">&times;</span>
+        <h2>Félicitations !</h2>
+        <p id="win-message"></p>
+        <button onclick="closeWinPopup()">Fermer</button>
+    </div>
+</div>
+
  </div>
         
 <script>
@@ -266,6 +378,8 @@ window.addEventListener('click', function (e) {
         let rows, cols, playerPos, playground;
         let originalPlayerPos, originalPlayground;
 
+        let gameEnded = false;
+
         const savedState = <?= $savedState ? json_encode($savedState) : 'null' ?>;
 
         async function loadLevel(level) {
@@ -299,6 +413,20 @@ window.addEventListener('click', function (e) {
                 playerPos: playerPos,
                 playground: playgroundGrid
             };
+        }
+
+        function showWinPopup(moves) {
+            const popup = document.getElementById('win-popup');
+            document.getElementById('win-message').textContent = `Vous avez rempli toute la grille en ${moves} mouvements !`;
+            popup.style.display = 'flex';
+            setTimeout(() => popup.classList.add('show'), 10);
+            gameEnded = true; // Empêche tout déplacement après victoire
+        }
+
+        function closeWinPopup() {
+            const popup = document.getElementById('win-popup');
+            popup.classList.remove('show');
+            setTimeout(() => popup.style.display = 'none', 300);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -369,6 +497,7 @@ window.addEventListener('click', function (e) {
                 document.getElementById('currentState').value = JSON.stringify(stateToSend);
             });
 
+            document.getElementById('close-popup').onclick = closeWinPopup;
 
             function initGame() {
                 // Réinitialisation à l'état original
@@ -594,6 +723,10 @@ window.addEventListener('click', function (e) {
             }
             
             function slide(direction) {
+                // Empêche de bouger si le popup de victoire est affiché
+                const popup = document.getElementById('win-popup');
+                if (popup.classList.contains('show')) return;
+
                 if (isMoving) return;
                 isMoving = true;
                 let fallen = false;
@@ -712,7 +845,7 @@ window.addEventListener('click', function (e) {
             function checkWin() {
                 let NotVisited = playground.some(l => l.some(n => n === PATH));
                 if (!NotVisited) setTimeout(() => {
-                    alert(`Félicitations ! Vous avez rempli toute la grille en  ${sessionStorage.getItem("moves")} mouvements !`);
+                    showWinPopup(sessionStorage.getItem("moves"));
                 }, 50);
             }
             

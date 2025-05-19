@@ -552,8 +552,11 @@ body.connexion h2, #contact form h2 {
 }
 
 #connexion-main .input-box input:focus ~ label,
-#connexion-main .input-box input:valid ~ label {
+#connexion-main .input-box input:valid ~ label, 
+#connexion-main .input-box input:not(:placeholder-shown) ~ label {
   top: -5px;
+  font-size: 0.9em;
+  color: #fff;
 }
 
 #connexion-main .input-box input {
@@ -1225,9 +1228,7 @@ body.connexion h2, #contact form h2 {
   color: white;
   opacity: 1;
 }
-#connexion-main .input-box input:not(:placeholder-shown) ~ label {
-  top: -10px;
-}
+
 .dashboard-box button[type="submit"],
 .dashboard-box form[action="logout.php"] button {
   width: 100%;
