@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Slide - Play</title>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
-        <?php
-        $niveau = $_GET["level"] ?? 1;
-        $prec = $niveau < 2 ? 1 : $niveau - 1;
-        $suiv = $niveau + 1;
-        // echo "<div><a href='play2.php?level=$prec'>Previous level</a> - <a href='play2.php?level=$niveau'>Current level</a> - <a href='play2.php?level=$suiv'>Next level</a></div>";
-    ?>
+    <title>Color Slide</title>
     <style>
- 
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
         h1 {
             color: #333;
             margin-bottom: 20px;
@@ -21,7 +23,9 @@
 
         .game-container {
             position: relative;
-            background-color:white;
+            width: 400px;
+            height: 400px;
+            background-color: #fff;
             border-radius: 6px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 15px;
@@ -34,10 +38,12 @@
             grid-template-rows: repeat(10, 1fr);
             width: 100%;
             height: 100%;
+            /* gap: 2px; */
         }
 
         .cell {
             background-color: #ddd;
+            /* border-radius: 2px; */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -48,23 +54,27 @@
         }
 
         .cell.wall {
-            background-color: #333333;
+            background-color: #333;
         }
 
         .player {
+            background-color: #FF9800;
+            /*border-radius: 50%;*/
             width: 100%;
             height: 100%;
+            /*box-shadow: 0 0 5px #FF9800;*/
             position: absolute;
             z-index: 10;
             transition: transform 0.3s none;
-            background-image: url("game/sprites/sprite.png");
+            /* background-image: url("../sprites/sprite.png");
             background-size: cover;
-            background-repeat: no-repeat;
+            background-repeat: no-repeat; */
         }
 
         .player.animating {
             position: fixed;
             z-index: 1000;
+            /* Make sure it's above everything */
         }
 
         .player.falling {
@@ -90,28 +100,29 @@
             height: 100%;
             transform: scale(0);
             transform-origin: center;
+            /*transition: transform 0.5s linear;*/
             z-index: 1;
         }
 
-        /* Skins de traînée */
-
-        .cell.visited .fill { 
-            background-color: pink;
+        .cell.visited .fill {
+            /* background-image: url("../sprites/test-trail.png");
+            background-size: cover;
+            background-repeat: no-repeat; */
+            background-color: #00BFFF;
             transform: scale(1);
             display: flex;
         }
 
         .controls {
+            margin-top: 20px;
             display: flex;
-            align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
-
         }
 
         button {
+            padding: 10px 20px;
             font-size: 16px;
-            background-color:white;
+            background-color: #8f7a66;
             color: white;
             border: none;
             border-radius: 3px;
@@ -119,7 +130,7 @@
         }
 
         button:hover {
-       
+            background-color: #9f8b77;
         }
 
         .instructions {
@@ -130,269 +141,106 @@
         }
         
         .tp {
-            background-image: url("game/sprites/TP.gif");
+            /* border-radius: 50%; */
+            background-color: purple; 
+            /*background-image: url("../sprites/tp.png");
             background-size: cover;
-            background-repeat: no-repeat;
+            background-repeat: no-repeat;*/
         }
 
         .hole {
-            background-color: red;
+            background-color: white;
+            border : 1px #333 solid;
         }
+
     </style>
 </head>
+
 <body>
-    <div class="menu-icon" onclick="toggleDropdown()">
-    🏆
+    <h1>Color Slide</h1>
+    <div class="game-container">
+        <div class="grid" id="grid"></div>
     </div>
-    <header>
-        <?php include 'php/header1.php'; ?>
-    </header>
-    <main id="play">
-        <div class="game-wrapper">
-            <div class="game-container">
-                <div class="controls">
-                    <a>
-                        <img src="icons/logo_home_blue.png" alt="Home">
-                    </a>
-                    <button id="new-game"><img src="icons/recharger.png" alt="Restart"></button>
+    <div class="controls">
+        <button id="new-game">Nouvelle partie</button>
+    </div>
 
-                    <a>
-                        <img src="icons/parametres.png" alt="Parameters">
-                    </a>
-
-                    <form method="POST" action="game/scripts/solveur.php">
-                        <input type="hidden" name="level_name" value="<?= $_GET["level"] ?? 1 ?>">
-                        <input type="hidden" name="current_state" id="currentState">
-                        <button type="submit"><img src="icons/point-dinterrogation.png" alt="Hint"></button>
-                    </form>
-
-                </div>
-                <div id="grid" class="grid"></div>
-
-
-                <?php
-                    unset($_SESSION["solution"]);
-                    // Récupérer l'état sauvegardé s'il existe
-                    $savedState = null;
-                    if (isset($_SESSION['current_state'])) {
-                        $savedState = json_decode($_SESSION['current_state'], true);
-                        unset($_SESSION['current_state']);
-                    }
-                ?>
-            </div>
-            <div class="dropdown" id="leaderboard">
-                <table>
-                    <thead>
-                        <tr>
-                            <th colspan="3">Leaderboard 🏆</th>
-                        </tr>
-                    </thead>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>User</th>
-                            <th>Moves</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>🥇</td>
-                            <td>Alice</td>
-                            <td>150</td>
-                        </tr>
-                        <tr>
-                            <td>🥈</td>
-                            <td>Bob</td>
-                            <td>120</td>
-                        </tr>
-                        <tr>
-                            <td>🥉</td>
-                            <td>Charlie</td>
-                            <td>100</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Dave</td>
-                            <td>90</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Eve</td>
-                            <td>85</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Natypeno</td>
-                            <td>85</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-<script>
-
-function toggleDropdown() {
-    const menuIcon = document.querySelector('.menu-icon');
-    const dropdown = document.getElementById('leaderboard');
-
-    // Ajoute ou supprime les classes "open" pour déclencher les transitions
-    if (dropdown.classList.contains('open')) {
-        dropdown.classList.remove('open'); // Ferme le menu
-        menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
-    } else {
-        dropdown.classList.add('open'); // Ouvre le menu
-        menuIcon.classList.add('open'); // Déplace l'icône vers la gauche
-    }
-}
-
-// Ferme le menu si on clique en dehors
-window.addEventListener('click', function (e) {
-    const menuIcon = document.querySelector('.menu-icon');
-    const dropdown = document.getElementById('leaderboard');
-
-    if (!menuIcon.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove('open'); // Ferme le menu
-        menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
-    }
-});
-
-
-
-// Script du jeu 
-
+    <script>
         const EMPTY = -1;
         const VISITED = 0;
         const PATH = 1;
         const WALL = 2;
         const TP = 3;
         const HOLE = 4;
-        const PLAYER = 5;
-
-        let rows, cols, playerPos, playground;
-        let originalPlayerPos, originalPlayground;
-
-        const savedState = <?= $savedState ? json_encode($savedState) : 'null' ?>;
-
-        async function loadLevel(level) {
-            try {
-                const response = await fetch(`game/levels/${level}.json`);
-                if (!response.ok) throw new Error("Error while loading level");
-                const data = await response.json();
-                return decodeJSON(data);
-            } catch (error) {
-                console.error("Error:", error);
-                return null;
-            }
-        }
-
-        function decodeJSON(data) {
-            const rows = data[0];
-            const cols = data[1];
-            const playground = data.slice(2);
-            
-            const playerIndex = playground.indexOf(PLAYER);
-            const playerPos = {row: Math.floor(playerIndex / cols), col: playerIndex % cols};
-            
-            const playgroundGrid = [];
-            for (let i = 0; i < playground.length; i += cols) {
-                playgroundGrid.push(playground.slice(i, i + cols));
-            }
-
-            return {
-                rows: rows,
-                cols: cols,
-                playerPos: playerPos,
-                playground: playgroundGrid
-            };
-        }
-
+        
         document.addEventListener('DOMContentLoaded', () => {
             const grid = document.getElementById('grid');
-            const newGameButton = document.getElementById('new-game');         
-            const urlParams = new URLSearchParams(window.location.search);
-            const levelName = urlParams.get('level') || "1";   
-            
+            const newGameButton = document.getElementById('new-game');
+
+            const rows = 10;
+            const cols = 10;
+            const cellSize = 400 / 6; // Taille d'une case en pixels
+            let playerPos = { row: 1, col: 1 };
+            let playground = [];
             let isMoving = false;
             let animationFrameId = null;
             let TPs = [];
+            let moves = 0;
 
-            if (savedState) {
-                // Décoder l'état sauvegardé comme un niveau normal
-                const savedLevelData = decodeJSON(savedState);
-                
-                // Mettre à jour les références originales
-                rows = savedLevelData.rows;
-                cols = savedLevelData.cols;
-
-                originalPlayerPos = {...savedLevelData.playerPos}; // PROBLEME ICI
-                originalPlayground = JSON.parse(JSON.stringify(savedLevelData.playground));
-                
-                // Initialiser avec l'état sauvegardé
-                playerPos = {...originalPlayerPos};
-                playground = JSON.parse(JSON.stringify(originalPlayground));
-
-                console.log(playground);
-                
-                initGame();
-            }
-            else{
-                loadLevel(levelName).then(levelData => {
-                    if (levelData) {
-                        rows = levelData.rows;
-                        cols = levelData.cols;
-                        
-                        // Sauvegarde de l'état original
-                        originalPlayerPos = {...levelData.playerPos};
-                        originalPlayground = JSON.parse(JSON.stringify(levelData.playground));
-                        
-                        // Initialisation avec les valeurs originales
-                        playerPos = {...originalPlayerPos};
-                        playground = JSON.parse(JSON.stringify(originalPlayground));
-                        
-                        initGame();
-                    } else {
-                        console.error("Level not found.");
-                        alert("Level not found.");
-                    }
-                }).catch(error => {
-                    console.error("Error while loading:", error);
-                });
-            }
-
-            document.querySelector('form').addEventListener('submit', function(e) {
-                // Clone profond du tableau 2D
-                const clonedPlayground = JSON.parse(JSON.stringify(playground));
-                
-                // Mettre à jour la position du joueur dans le clone
-                clonedPlayground[originalPlayerPos.row][originalPlayerPos.col] = VISITED;
-                clonedPlayground[playerPos.row][playerPos.col] = PLAYER;
-                
-                // Aplatir le tableau 2D en 1D et ajouter rows/cols devant
-                const flatPlayground = clonedPlayground.flat();
-                const stateToSend = [rows, cols, ...flatPlayground];
-                
-                document.getElementById('currentState').value = JSON.stringify(stateToSend);
-            });
-
-
+            // Initialisation du jeu
             function initGame() {
-                // Réinitialisation à l'état original
-                playerPos = {...originalPlayerPos};
-                playground = JSON.parse(JSON.stringify(originalPlayground));
-                
-
+                // Annuler toute animation en cours
                 if (animationFrameId) {
                     cancelAnimationFrame(animationFrameId);
                 }
 
                 grid.innerHTML = '';
-                TPs = [];
+                moves = 0;
+                TPs = []; // Important: Réinitialiser les téléporteurs à chaque nouvelle partie
+                
+                playerPos = { row: 1, col: 1 };
 
-                grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-                grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+                playground = [
+                    [WALL, WALL, WALL, WALL, WALL, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, HOLE, PATH, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, WALL, WALL, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, WALL, WALL, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL,PATH, PATH,PATH,PATH,WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL,WALL,WALL,WALL,WALL,WALL, EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY]
+                ]
 
+
+                playground1 = [
+                    [WALL, WALL, WALL, WALL, WALL, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, PATH, PATH, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, WALL, WALL, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, WALL, WALL, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, PATH, PATH, PATH, PATH, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [WALL, WALL, WALL, WALL, WALL, WALL,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY],
+                    [EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY]
+                ]
+
+                playground2 = [
+                    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+                    [EMPTY, WALL,  WALL,  WALL,  WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+                    [EMPTY, WALL,  PATH,  TP,    WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+                    [EMPTY, WALL,  WALL,  WALL,  WALL,  EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
+                    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  WALL,  WALL,  EMPTY],
+                    [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WALL,  PATH,  WALL,  EMPTY],
+                    [EMPTY, EMPTY, EMPTY, EMPTY, WALL,  WALL,  WALL,  PATH,  WALL,  EMPTY],
+                    [EMPTY, EMPTY, EMPTY, EMPTY, WALL,  TP,    PATH,  PATH,  WALL,  EMPTY],
+                    [EMPTY, EMPTY, EMPTY, EMPTY, WALL,  PATH,  PATH,  PATH,  WALL,  EMPTY],
+                    [EMPTY, EMPTY, EMPTY, EMPTY, WALL,  WALL,  WALL,  WALL,  EMPTY, EMPTY],
+                ];
+
+                // Détecter et enregistrer les positions des téléporteurs
                 for (let row = 0; row < rows; row++) {
                     for (let col = 0; col < cols; col++) {
                         if (playground[row][col] === TP) {
@@ -403,6 +251,7 @@ window.addEventListener('click', function (e) {
 
                 isMoving = false;
 
+                // Création de la grille
                 for (let row = 0; row < rows; row++) {
                     for (let col = 0; col < cols; col++) {
                         const cell = document.createElement('div');
@@ -418,11 +267,12 @@ window.addEventListener('click', function (e) {
                             cell.classList.add('hole');
                         }
 
+                        // Ajouter l'effet de remplissage
                         const fill = document.createElement('div');
                         fill.className = 'fill';
                         cell.appendChild(fill);
 
-                        if (playground[row][col] === VISITED || (col === playerPos.col && row === playerPos.row)) {
+                        if (playground[row][col] === VISITED || (col === playerPos.col && row === playerPos.row) || playground[row][col] === VISITED ) {
                             cell.classList.add('visited');
                         }
 
@@ -437,6 +287,7 @@ window.addEventListener('click', function (e) {
                 }
             }
 
+            // Animation de déplacement 
             function animateMovement(startPos, endPos, direction, callback) {
                 const playerElement = document.querySelector('.player');
                 if (!playerElement) return;
@@ -479,6 +330,7 @@ window.addEventListener('click', function (e) {
 
                     playerElement.style.transform = `translate(${translateX}px, ${translateY}px)`;
 
+                    // Marquage des cases visitées pendant l'animation
                     markVisitedCells(startPos, endPos, direction, progress);
 
                     if (progress < 1) {
@@ -504,13 +356,17 @@ window.addEventListener('click', function (e) {
                 animationFrameId = requestAnimationFrame(step);
             }
 
+            // Marquer les cases visitées
             function markVisitedCells(startPos, endPos, direction, progress) {
+                // Ne pas marquer si on arrive à un téléporteur
                 if (playground[endPos.row][endPos.col] === TP) {
+                    // Pour le chemin jusqu'au TP, on marque seulement les cases PATH
                     const totalSteps = Math.max(
                         Math.abs(endPos.row - startPos.row),
                         Math.abs(endPos.col - startPos.col)
-                    ) - 1;
+                    ) - 1; // -1 car on ne marque pas le TP lui-même
                     
+                    // Calculer combien de pas on marque avec le progrès actuel
                     const currentStep = Math.min(Math.floor(progress * totalSteps), totalSteps);
                     
                     for (let step = 0; step <= currentStep; step++) {
@@ -535,10 +391,13 @@ window.addEventListener('click', function (e) {
                                 break;
                         }
 
+                        // Ne pas dépasser les limites
                         if (row < 0 || row >= rows || col < 0 || col >= cols) continue;
                         
+                        // S'arrêter si on arrive au TP
                         if (playground[row][col] === TP) break;
 
+                        // Marquer comme visité seulement si c'est un chemin
                         if (playground[row][col] === PATH) {
                             playground[row][col] = VISITED;
                             const cell = grid.children[row * cols + col];
@@ -546,6 +405,7 @@ window.addEventListener('click', function (e) {
                         }
                     }
                 } else {
+                    // Comportement normal pour les autres déplacements
                     const totalSteps = Math.max(
                         Math.abs(endPos.row - startPos.row),
                         Math.abs(endPos.col - startPos.col)
@@ -575,8 +435,10 @@ window.addEventListener('click', function (e) {
                                 break;
                         }
 
+                        // Ne pas dépasser les limites
                         if (row < 0 || row >= rows || col < 0 || col >= cols) continue;
 
+                        // Marquer comme visité seulement si c'est un chemin
                         if (playground[row][col] === PATH) {
                             playground[row][col] = VISITED;
                             const cell = grid.children[row * cols + col];
@@ -586,20 +448,25 @@ window.addEventListener('click', function (e) {
                 }
             }
 
+            // Animation de chute dans le trou
             function fallIntoHole(callback) {
                 const playerElement = document.querySelector('.player');
                 if (!playerElement) return;
 
                 playerElement.classList.add('falling');
                 
+                checkWin();
+
+                // Après l'animation, réinitialiser le jeu
                 setTimeout(() => {
                     if (playerElement.parentNode) {
                         playerElement.parentNode.removeChild(playerElement);
                     }
                     callback();
-                }, 500);
+                }, 500); // Correspond à la durée de l'animation
             }
             
+            // Déplace le joueur jusqu'au mur ou téléporteur
             function slide(direction) {
                 if (isMoving) return;
                 isMoving = true;
@@ -610,6 +477,7 @@ window.addEventListener('click', function (e) {
                 const startPos = { ...playerPos };
                 let teleportDestination = null;
                 
+                // Première étape : trouver où le joueur s'arrête
                 while (true) {
                     let nextRow = newRow;
                     let nextCol = newCol;
@@ -621,12 +489,15 @@ window.addEventListener('click', function (e) {
                         case 'right': nextCol++; break;
                     }
 
+                    // Vérifier les limites et les murs
                     if (nextRow < 0 || nextRow >= rows || nextCol < 0 || nextCol >= cols || 
                         playground[nextRow][nextCol] === WALL) {
                         break;
                     }
 
+                    // On trouve un téléporteur
                     if (playground[nextRow][nextCol] === TP) {
+                        // Trouver l'autre téléporteur
                         const otherTP = TPs.find(tp => !(tp.row === nextRow && tp.col === nextCol));
                         
                         if (otherTP) {
@@ -635,10 +506,10 @@ window.addEventListener('click', function (e) {
                                 destination: otherTP
                             };
                             
-                            newRow = nextRow;
+                            newRow = nextRow; // Position du premier TP
                             newCol = nextCol;
                             moved = true;
-                            break;
+                            break; // Important: s'arrêter au TP, pas continuer
                         }
                     }
 
@@ -656,10 +527,14 @@ window.addEventListener('click', function (e) {
                 }
 
                 if (moved) {
+                    // Animation du mouvement initial (jusqu'au TP ou à la destination finale)
                     animateMovement(startPos, { row: newRow, col: newCol }, direction, () => {
+                        // Cas de téléportation
                         if (teleportDestination) {
+                            // Mettre à jour la position du joueur à la sortie du téléporteur
                             const tpDest = teleportDestination.destination;
                             
+                            // Mettre à jour l'élément visuel du joueur
                             const oldCell = grid.children[newRow * cols + newCol];
                             const newCell = grid.children[tpDest.row * cols + tpDest.col];
                             const player = document.querySelector('.player');
@@ -669,9 +544,11 @@ window.addEventListener('click', function (e) {
                                 newCell.appendChild(player);
                             }
                             
+                            // Mettre à jour la position interne du joueur
                             playerPos.row = tpDest.row;
                             playerPos.col = tpDest.col;
                             
+                            // Vérifier si on peut continuer après le TP
                             let afterTPRow = tpDest.row;
                             let afterTPCol = tpDest.col;
                             
@@ -684,21 +561,21 @@ window.addEventListener('click', function (e) {
                             
                             isMoving = false;
                             
+                            // Si on peut continuer après la téléportation
                             if (afterTPRow >= 0 && afterTPRow < rows && 
                                 afterTPCol >= 0 && afterTPCol < cols && 
                                 playground[afterTPRow][afterTPCol] !== WALL) {
-                                slide(direction);
+                                slide(direction); // Continuer dans la même direction
                             } else {
                                 checkWin();
                             }
                         } 
                         else if (fallen) {
                             fallIntoHole(() => {
+                                playerPos.row = 3;
+                                playerPos.col = 1;
                                 isMoving = false;
                                 initGame();
-                                let moves = parseInt(sessionStorage.getItem("moves")) || 0;
-                                moves++;
-                                sessionStorage.setItem("moves", moves.toString());
                             });
                         } 
                         else {
@@ -706,29 +583,24 @@ window.addEventListener('click', function (e) {
                             playerPos.col = newCol;
                             isMoving = false;
                             checkWin();
-                            let moves = parseInt(sessionStorage.getItem("moves")) || 0;
-                            moves++;
-                            sessionStorage.setItem("moves", moves.toString());
                         }
+                        moves++;
                     });
                 } else {
                     isMoving = false;
                 }
             }
 
+            // Vérifie si le joueur a gagné
             function checkWin() {
                 let NotVisited = playground.some(l => l.some(n => n === PATH));
                 if (!NotVisited) setTimeout(() => {
-                    alert(`Félicitations ! Vous avez rempli toute la grille en  ${sessionStorage.getItem("moves")} mouvements !`);
+                    //alert(`Félicitations ! Vous avez rempli toute la grille en ${moves} mouvements !`);
                 }, 50);
             }
-            
-            newGameButton.addEventListener('click', () => {
-                sessionStorage.setItem("moves", "0");
-                const niveau = new URLSearchParams(window.location.search).get("level") ?? 1;
-                document.location.href = `play.php?level=${niveau}`;
-                initGame();
-            });
+
+            // Écouteurs d'événements 
+            newGameButton.addEventListener('click', initGame);
 
             document.addEventListener('keydown', (e) => {
                 switch (e.key) {
@@ -738,12 +610,11 @@ window.addEventListener('click', function (e) {
                     case 'ArrowRight': slide('right'); break;
                 }
             });
-        });
 
-</script>
-    </main>
-    <footer>
-        <?php include 'php/footer.php'; ?>
-    </footer>
+            // Démarrer le jeu 
+            initGame();
+        });
+    </script>
 </body>
+
 </html>

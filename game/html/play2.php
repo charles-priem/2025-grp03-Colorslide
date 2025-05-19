@@ -1,19 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<?php
+session_start();
+?>
+
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Slide - Play</title>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css" integrity="sha384-NvKbDTEnL+A8F/AA5Tc5kmMLSJHUO868P+lDtTpJIeQdGYaUIuLr4lVGOEA1OcMy" crossorigin="anonymous">
-        <?php
+    <title>Color Slide</title><span> <a href="concepteur.php">Level editor</a></span>
+    <?php
         $niveau = $_GET["level"] ?? 1;
         $prec = $niveau < 2 ? 1 : $niveau - 1;
         $suiv = $niveau + 1;
-        // echo "<div><a href='play2.php?level=$prec'>Previous level</a> - <a href='play2.php?level=$niveau'>Current level</a> - <a href='play2.php?level=$suiv'>Next level</a></div>";
+        echo "<div><a href='play2.php?level=$prec'>Previous level</a> - <a href='play2.php?level=$niveau'>Current level</a> - <a href='play2.php?level=$suiv'>Next level</a></div>";
     ?>
     <style>
- 
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
         h1 {
             color: #333;
             margin-bottom: 20px;
@@ -21,7 +33,9 @@
 
         .game-container {
             position: relative;
-            background-color:white;
+            width: 400px;
+            height: 400px;
+            background-color: #fff;
             border-radius: 6px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 15px;
@@ -57,7 +71,7 @@
             position: absolute;
             z-index: 10;
             transition: transform 0.3s none;
-            background-image: url("game/sprites/sprite.png");
+            background-image: url("../sprites/sprite.png");
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -93,25 +107,22 @@
             z-index: 1;
         }
 
-        /* Skins de traînée */
-
-        .cell.visited .fill { 
-            background-color: pink;
+        .cell.visited .fill {
+            background-color: orange;
             transform: scale(1);
             display: flex;
         }
 
         .controls {
+            margin-top: 20px;
             display: flex;
-            align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
-
         }
 
         button {
+            padding: 10px 20px;
             font-size: 16px;
-            background-color:white;
+            background-color: #8f7a66;
             color: white;
             border: none;
             border-radius: 3px;
@@ -119,7 +130,7 @@
         }
 
         button:hover {
-       
+            background-color: #9f8b77;
         }
 
         .instructions {
@@ -130,7 +141,7 @@
         }
         
         .tp {
-            background-image: url("game/sprites/TP.gif");
+            background-image: url("../sprites/TP.gif");
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -140,128 +151,38 @@
         }
     </style>
 </head>
+
 <body>
-    <div class="menu-icon" onclick="toggleDropdown()">
-    🏆
+    <h1>Color Slide</h1>
+    <div class="game-container">
+        <div class="grid" id="grid"></div>
     </div>
-    <header>
-        <?php include 'php/header1.php'; ?>
-    </header>
-    <main id="play">
-        <div class="game-wrapper">
-            <div class="game-container">
-                <div class="controls">
-                    <a>
-                        <img src="icons/logo_home_blue.png" alt="Home">
-                    </a>
-                    <button id="new-game"><img src="icons/recharger.png" alt="Restart"></button>
+    <div class="controls">
+        <button id="new-game">Restart</button>
+    </div>
+    <form method="POST" action="../scripts/solveur.php">
+        <input type="hidden" name="level_name" value="<?= $_GET["level"] ?? 1 ?>">
+        <input type="hidden" name="current_state" id="currentState">
+        <button type="submit">Run the solver</button>
+    </form>
+    <?php
+        if (isset($_SESSION["solution"])) echo "Shortest path from your position in order to complete this level: " . $_SESSION["solution"];
+        echo "<br>Lancer le solveur fait refresh la page";
+        unset($_SESSION["solution"]);
 
-                    <a>
-                        <img src="icons/parametres.png" alt="Parameters">
-                    </a>
+        // Récupérer l'état sauvegardé s'il existe
+        $savedState = null;
+        if (isset($_SESSION['current_state'])) {
+            $savedState = json_decode($_SESSION['current_state'], true);
+            unset($_SESSION['current_state']); // Nettoyer après utilisation
+        }
 
-                    <form method="POST" action="game/scripts/solveur.php">
-                        <input type="hidden" name="level_name" value="<?= $_GET["level"] ?? 1 ?>">
-                        <input type="hidden" name="current_state" id="currentState">
-                        <button type="submit"><img src="icons/point-dinterrogation.png" alt="Hint"></button>
-                    </form>
+        if (!isset($_SESSION['moves'])){
+            $_SESSION['moves']=0;
+        }
+        ?>
 
-                </div>
-                <div id="grid" class="grid"></div>
-
-
-                <?php
-                    unset($_SESSION["solution"]);
-                    // Récupérer l'état sauvegardé s'il existe
-                    $savedState = null;
-                    if (isset($_SESSION['current_state'])) {
-                        $savedState = json_decode($_SESSION['current_state'], true);
-                        unset($_SESSION['current_state']);
-                    }
-                ?>
-            </div>
-            <div class="dropdown" id="leaderboard">
-                <table>
-                    <thead>
-                        <tr>
-                            <th colspan="3">Leaderboard 🏆</th>
-                        </tr>
-                    </thead>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>User</th>
-                            <th>Moves</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>🥇</td>
-                            <td>Alice</td>
-                            <td>150</td>
-                        </tr>
-                        <tr>
-                            <td>🥈</td>
-                            <td>Bob</td>
-                            <td>120</td>
-                        </tr>
-                        <tr>
-                            <td>🥉</td>
-                            <td>Charlie</td>
-                            <td>100</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Dave</td>
-                            <td>90</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Eve</td>
-                            <td>85</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Natypeno</td>
-                            <td>85</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-<script>
-
-function toggleDropdown() {
-    const menuIcon = document.querySelector('.menu-icon');
-    const dropdown = document.getElementById('leaderboard');
-
-    // Ajoute ou supprime les classes "open" pour déclencher les transitions
-    if (dropdown.classList.contains('open')) {
-        dropdown.classList.remove('open'); // Ferme le menu
-        menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
-    } else {
-        dropdown.classList.add('open'); // Ouvre le menu
-        menuIcon.classList.add('open'); // Déplace l'icône vers la gauche
-    }
-}
-
-// Ferme le menu si on clique en dehors
-window.addEventListener('click', function (e) {
-    const menuIcon = document.querySelector('.menu-icon');
-    const dropdown = document.getElementById('leaderboard');
-
-    if (!menuIcon.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove('open'); // Ferme le menu
-        menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
-    }
-});
-
-
-
-// Script du jeu 
-
+    <script>
         const EMPTY = -1;
         const VISITED = 0;
         const PATH = 1;
@@ -277,7 +198,7 @@ window.addEventListener('click', function (e) {
 
         async function loadLevel(level) {
             try {
-                const response = await fetch(`game/levels/${level}.json`);
+                const response = await fetch(`../levels/${level}.json`);
                 if (!response.ok) throw new Error("Error while loading level");
                 const data = await response.json();
                 return decodeJSON(data);
@@ -726,7 +647,7 @@ window.addEventListener('click', function (e) {
             newGameButton.addEventListener('click', () => {
                 sessionStorage.setItem("moves", "0");
                 const niveau = new URLSearchParams(window.location.search).get("level") ?? 1;
-                document.location.href = `play.php?level=${niveau}`;
+                document.location.href = `play2.php?level=${niveau}`;
                 initGame();
             });
 
@@ -739,11 +660,6 @@ window.addEventListener('click', function (e) {
                 }
             });
         });
-
-</script>
-    </main>
-    <footer>
-        <?php include 'php/footer.php'; ?>
-    </footer>
+    </script>
 </body>
 </html>

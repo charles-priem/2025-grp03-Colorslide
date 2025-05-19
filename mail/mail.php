@@ -50,9 +50,9 @@ function sendRecoveryMail($to, $user_id) {
         $mail->setFrom($_ENV['EMAIL_USERNAME'], 'Support');
         $mail->addAddress($to);
         $mail->isHTML(true);
-        $mail->Subject = 'Demande de reinitialisation du mot de passe';
-        $mail->Body    = "Votre code de recuperation est : <b>$code</b>";
-        $mail->AltBody = "Votre code de recuperation est : $code";
+        $mail->Subject = 'Password reset request';
+        $mail->Body    = "Your recovery code is : <b>$code</b>";
+        $mail->AltBody = "Your recovery code is : $code";
         $mail->send();
         // echo 'Le message a été envoyé'; // Optionnel, à commenter pour éviter l'affichage lors de la redirection
     } catch (Exception $e) {

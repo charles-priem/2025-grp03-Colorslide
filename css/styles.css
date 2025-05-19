@@ -118,6 +118,10 @@ nav a{
   height:2px;
 }
 
+.dropdown_menu .linkanimation{
+  font-weight: bold;
+}
+
 .linkanimation:not(.animation-ready)::before {
   animation: none !important;
 }
@@ -439,9 +443,12 @@ html, body.connexion {
 }
 
 #connexion-main h2, #contact form h2{
-  padding-bottom: 1em;
+  padding-bottom: 0.5em;
 }
 
+#connexion-main .login-box .error{
+  margin-top : -.5em;
+}
 
 #connexion-main section {
   display: flex;
@@ -453,13 +460,14 @@ html, body.connexion {
 
 
 .login-box h2, #contact form h2{
-  padding-top:1em;
+  padding-top:0.5em;
 }
 
 #connexion-main .login-box {
   position:absolute;
   width: 100%;
   height:auto;
+  max-height: 80vh;
   max-width: 400px;
   min-width: 300px;
   background: rgba(255,255,255,0.05);
@@ -685,12 +693,14 @@ body.connexion h2, #contact form h2 {
     margin: 20px 0 5px;
   }
 }
-
+#play{
+  height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 #play .game-wrapper{
-  height:calc(100vh - 150px);
-  margin-top:90px;
-  margin-bottom: 60px;
   font-family:'Space Grotesk';
   text-align: center;
   overflow: hidden;
@@ -699,13 +709,34 @@ body.connexion h2, #contact form h2 {
   align-items: center; /* Centre verticalement */
 }
 
+#play .controls > a img, #play .controls button img {
+  height:25px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+
+#play .controls button img{
+  /* transform: rotate(-45deg); */
+  height:27px;
+}
+
+
+
+#play .game-container #grid{
+  aspect-ratio: 1/1 !important;
+}
+
+#play #new-game{
+  background-color:white;
+  padding:0;
+}
+
 #play .game-container {
   position: relative;
-  aspect-ratio: 1/1;
   margin:auto;
+  width:400px;
   max-width:400px;
-  width:100%;
-  background-color: #fff;
   border-radius: 6px;
   padding: 15px;
   box-sizing: border-box;
@@ -858,6 +889,8 @@ body.connexion h2, #contact form h2 {
 #contact form {
   position: relative;
   width: 100%;
+  margin-top:100px;
+  margin-bottom:100px;
   max-width: 400px;
   min-width: 300px;
   background: rgba(255,255,255,0.05);
@@ -1029,13 +1062,10 @@ body.connexion h2, #contact form h2 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
-.dbleaderboard thead {
-  background-color: #0056b3;
-}
 
 .dbleaderboard th, .dbleaderboard td {
   padding: 18px 14px;
-  text-align: left;
+  text-align: center;
   font-size: 1.08em;
 }
 
@@ -1044,7 +1074,7 @@ body.connexion h2, #contact form h2 {
   font-weight: 600;
   letter-spacing: 0.5px;
   border-bottom: 2px solid rgba(255,255,255,0.08);
-  background-color: #0056b3;
+  background-color: #333c4b
 }
 
 .dbleaderboard tbody tr {
@@ -1057,8 +1087,9 @@ body.connexion h2, #contact form h2 {
 }
 
 .dbleaderboard tbody tr:hover {
-  background: rgba(255, 100, 249, 0.10); /* var(--pink) */
+  background: rgb(5, 43, 77); /* var(--pink) */
 }
+
 
 .dbleaderboard td {
   color: var(--text-color, #ccc);
@@ -1084,7 +1115,9 @@ body.connexion h2, #contact form h2 {
 @media (max-width: 600px) {
   .dbleaderboard-container {
       padding: 10px 2px;
-  }
+      overflow-x: auto; /*permet le défilement horizontal si nécessaire*/
+  
+    }
   .dbleaderboard th, .dbleaderboard td {
       padding: 10px 6px;
       font-size: 0.97em;
