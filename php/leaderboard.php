@@ -18,7 +18,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Slide - Sign </title>
+    <title>Color Slide - Leaderboard</title>
     <link rel="stylesheet" type="text/css" href="../css/styles.css">
 </head>
 
@@ -31,44 +31,71 @@ try {
         <div class="dbleaderboard-gradient-wrapper">
             <div class="dbleaderboard-container">
                 <?php
-// Définition de la requête SQL pour le classement
-$sql = "SELECT 
-            u.username, 
-            COUNT(s.id) AS levels_completed, 
-            SUM(s.moves) AS total_moves, 
-            MIN(s.date) AS first_record_date
-        FROM users u
-        JOIN stats s ON s.user_id = u.id
-        GROUP BY u.id
-        ORDER BY levels_completed DESC, total_moves ASC, first_record_date ASC";
-$stmt = $pdo->query($sql);
-//nitialisation du compteur de classement
-$rank = 1;
-?>
+                // Requête SQL pour récupérer tout le leaderboard
+                $sql = "SELECT 
+                            u.id,
+                            u.username, 
+                            COUNT(s.id) AS levels_completed, 
+                            SUM(s.moves) AS total_moves, 
+                            MIN(s.date) AS first_record_date
+                        FROM users u
+                        JOIN stats s ON s.user_id = u.id
+                        GROUP BY u.id
+                        ORDER BY levels_completed DESC, total_moves ASC, first_record_date ASC";
+                $stmt = $pdo->query($sql);
 
-<table class="dbleaderboard">
-    <thead>
-        <tr>
-            <th>Ranking</th>
-            <th>Username</th>
-            <th>Total moves</th>
-            <th>Levels completed</th>
-        </tr>
-    </thead>
-    <tbody>
-            
-<?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) : 
-    $isUser = isset($_SESSION['username']) && $row['username'] === $_SESSION['username'];
-?>
-    <tr<?= $isUser ? ' class="my-score"' : '' ?>>
-        <td><?= $rank++ ?></td>
-        <td><?= htmlspecialchars($row['username']) ?></td>
-        <td><?= $row['total_moves'] ?></td>
-        <td><?= $row['levels_completed'] ?></td>
-    </tr>
-<?php endwhile; ?>
-    </tbody>
-</table>
+                // On stocke tout le leaderboard dans un tableau pour pouvoir retrouver le rang de l'utilisateur connecté
+                $leaderboard = [];
+                $myRank = null;
+                $myRow = null;
+                $rank = 1;
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $leaderboard[] = $row;
+                    if (
+                        isset($_SESSION['user_id']) &&
+                        $row['id'] == $_SESSION['user_id']
+                    ) {
+                        $myRank = $rank;
+                        $myRow = $row;
+                    }
+                    $rank++;
+                }
+                ?>
+                <table class="dbleaderboard">
+                    <thead>
+                        <tr>
+                            <th>Ranking</th>
+                            <th>Username</th>
+                            <th>Total moves</th>
+                            <th>Levels completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($myRow): ?>
+                        <tr class="my-score">
+                            <td><?= $myRank ?></td>
+                            <td><strong>Moi</strong></td>
+                            <td><?= $myRow['total_moves'] ?></td>
+                            <td><?= $myRow['levels_completed'] ?></td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php
+                    $rank = 1;
+                    foreach ($leaderboard as $row):
+                        $isUser = isset($_SESSION['user_id']) && $row['id'] == $_SESSION['user_id'];
+                    ?>
+                        <tr<?= $isUser ? ' class="my-score"' : '' ?>>
+                            <td><?= $rank ?></td>
+                            <td><?= htmlspecialchars($row['username']) ?></td>
+                            <td><?= $row['total_moves'] ?></td>
+                            <td><?= $row['levels_completed'] ?></td>
+                        </tr>
+                    <?php
+                        $rank++;
+                    endforeach;
+                    ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>

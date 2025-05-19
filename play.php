@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -106,20 +108,26 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
+            justify-content: space-between;
+        }
 
+        .controls .logo{
+            position:absolute;
+            width:100px !important;
+            height:100px !important;
+            top:0;
+            left:50%;
+            transform: translateX(-50%);
+            margin-top:-22px;
         }
 
         button {
             font-size: 16px;
-            background-color:white;
+            background-color:white; 
             color: white;
             border: none;
             border-radius: 3px;
             cursor: pointer;
-        }
-
-        button:hover {
-       
         }
 
         .instructions {
@@ -151,20 +159,26 @@
         <div class="game-wrapper">
             <div class="game-container">
                 <div class="controls">
+                    <div class="left-wrapper">
                     <a>
                         <img src="icons/logo_home_blue.png" alt="Home">
                     </a>
                     <button id="new-game"><img src="icons/recharger.png" alt="Restart"></button>
+                    </div>
+                    <a href="/2025-grp03/index.php"><img class="logo" src="/2025-grp03/images/Logo.png" classe="logo"></a>
 
-                    <a>
-                        <img src="icons/parametres.png" alt="Parameters">
-                    </a>
 
+                    <div class="right-wrapper">
                     <form method="POST" action="game/scripts/solveur.php">
                         <input type="hidden" name="level_name" value="<?= $_GET["level"] ?? 1 ?>">
                         <input type="hidden" name="current_state" id="currentState">
                         <button type="submit"><img src="icons/point-dinterrogation.png" alt="Hint"></button>
                     </form>
+
+                    <a>
+                        <img class="parameters" src="icons/parametres.png" alt="Parameters">
+                    </a>
+                    </div>
 
                 </div>
                 <div id="grid" class="grid"></div>
@@ -181,33 +195,7 @@
                 ?>
             </div>
             <div class="dropdown" id="leaderboard">
-                <table>
-                    <thead>
-                        <tr>
-                            <th colspan="3">Leaderboard 🏆</th>
-                        </tr>
-                    </thead>
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>User</th>
-                            <th>Moves</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>🥇</td>
-                            <td>Alice</td>
-                            <td>150</td>
-                        </tr>
-                        <tr>
-                            <td>🥈</td>
-                            <td>Bob</td>
-                            <td>120</td>
-                        </tr>
-                        <tr>
-                            <td>🥉</td>
-                            <td>Charlie</td>
+                <table>/td>
                             <td>100</td>
                         </tr>
                         <tr>
@@ -229,7 +217,11 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+            
+        
+</div>
+
+ </div>
         
 <script>
 
@@ -242,8 +234,9 @@ function toggleDropdown() {
         dropdown.classList.remove('open'); // Ferme le menu
         menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
     } else {
-        dropdown.classList.add('open'); // Ouvre le menu
+        dropdown.classList.add('open'); 
         menuIcon.classList.add('open'); // Déplace l'icône vers la gauche
+
     }
 }
 

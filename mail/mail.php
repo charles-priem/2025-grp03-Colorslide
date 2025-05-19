@@ -19,6 +19,37 @@ if (!isset($_ENV['EMAIL_USERNAME']) || !isset($_ENV['EMAIL_PASSWORD'])) {
     die('Les variables d\'environnement ne sont pas correctement définies');
 }
 
+// Envoi du mail de validation de compte
+function sendValidationMail($to, $user_id, $code) {
+    global $pdo;
+
+    // Enregistrer le code dans la table users
+    $stmt = $pdo->prepare("UPDATE users SET validation_code = ?, is_verified = 0 WHERE id = ?");
+    $stmt->execute([$code, $user_id]);
+
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $_ENV['EMAIL_USERNAME'];
+        $mail->Password   = $_ENV['EMAIL_PASSWORD'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        $mail->setFrom($_ENV['EMAIL_USERNAME'], 'Support');
+        $mail->addAddress($to);
+        $mail->isHTML(true);
+        $mail->Subject = 'Validate your Color Slide account';
+        $mail->Body    = "Click on this link to validate your account: <a href='http://localhost/2025-grp03/php/verify_account.php/?email=$to&code=$code'>Valider mon compte</a>";
+        $mail->AltBody = "Validate your account with this code : $code";
+        $mail->send();
+    } catch (Exception $e) {
+        echo "Erreur d'envoi du mail : " . $mail->ErrorInfo;
+    }
+}
+
+// Envoi du mail de récupération
 function sendRecoveryMail($to, $user_id) {
     global $pdo;
 
@@ -54,7 +85,6 @@ function sendRecoveryMail($to, $user_id) {
         $mail->Body    = "Your recovery code is : <b>$code</b>";
         $mail->AltBody = "Your recovery code is : $code";
         $mail->send();
-        // echo 'Le message a été envoyé'; // Optionnel, à commenter pour éviter l'affichage lors de la redirection
     } catch (Exception $e) {
         echo "Le message n'a pas pu être envoyé. Erreur du mailer : {$mail->ErrorInfo}";
     }

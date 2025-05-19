@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db.php';
+require_once __DIR__ . '/../mail/mail.php';
 
 $errors = [];
 $success = "";
@@ -12,38 +13,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = trim($_POST['email'] ?? '');
         $pwd = $_POST['password'] ?? '';
 
-        if (empty($username)) {
-            $errors['username'] = "Username is required.";
-        }
-        elseif (empty($email)) {
-            $errors['email'] = "Email is required.";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Invalid email address";
-        } else {
-            // Vérifie si l'email existe déjà
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            if ($stmt->fetch()) {
-                $errors['email'] = "This email is already registered.";
-            }
-        }
-        if (empty($pwd)) {
-            $errors['password'] = "Password is required.";
-        } elseif (strlen($pwd) < 8) {
-            $errors['password'] = "Password must be at least 8 characters.";
-        } elseif (!preg_match('/[0-9]/', $pwd)) {
-            $errors['password'] = "Password must contain at least one digit.";
-        } elseif (!preg_match('/[a-zA-Z]/', $pwd)) {
-            $errors['password'] = "Password must contain at least one letter.";
-        }
+        // Vérifications de base
+        if (empty($username)) $errors['username'] = "Nom d'utilisateur requis";
+        if (empty($email)) $errors['email'] = "Email requis";
+        if (empty($pwd)) $errors['password'] = "Mot de passe requis";
+
+        // Vérifier si l'email existe déjà
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        if ($stmt->fetch()) $errors['email'] = "Email déjà utilisé";
 
         if (empty($errors)) {
             $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            if ($stmt->execute([$username, $email, $hashedPwd])) {
-                $success = "Registration successful! <a href='#' id='go-login'>Sign in</a>";
+            $validation_code = bin2hex(random_bytes(16));
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, is_verified, validation_code) VALUES (?, ?, ?, 0, ?)");
+            if ($stmt->execute([$username, $email, $hashedPwd, $validation_code])) {
+                $user_id = $pdo->lastInsertId();
+                sendValidationMail($email, $user_id, $validation_code);
+                $success = "Registration successful! A validation email has been sent to you.";
             } else {
-                $errors['global'] = "Registration error.";
+                $errors['global'] = "Erreur lors de l'inscription.";
             }
         }
     }
@@ -53,13 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = trim($_POST['email'] ?? '');
         $pwd = $_POST['password'] ?? '';
 
-        if (empty($email)) {
-            $errors['email'] = "Email is required.";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Invalid email address";
-        } elseif (empty($pwd)) {
-            $errors['password'] = "Password is required";
-        }
+        if (empty($email)) $errors['email'] = "Email requis";
+        if (empty($pwd)) $errors['password'] = "Mot de passe requis";
 
         if (empty($errors)) {
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
@@ -67,12 +51,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $user = $stmt->fetch();
 
             if ($user && password_verify($pwd, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['username'];
-                header('Location: dashboard.php');
-                exit;
+                if (!$user['is_verified']) {
+                    $errors['global'] = "Votre compte n'est pas validé. Vérifiez vos emails.";
+                } else {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_name'] = $user['username'];
+                    header('Location: dashboard.php');
+                    exit;
+                }
             } else {
-                $errors['global'] = "Incorrect credentials";
+                $errors['global'] = "Identifiants incorrects";
             }
         }
     }
