@@ -210,7 +210,7 @@
                         </tr>
                         <tr>
                             <td>5</td>
-                            <td>Natypeno</td>
+                            <td>Natys</td>
                             <td>85</td>
                         </tr>
 

@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 sendValidationMail($email, $user_id, $validation_code);
                 $success = "Registration successful! A validation email has been sent to you.";
             } else {
-                $errors['global'] = "Erreur lors de l'inscription.";
+                $errors['global'] = "Error during registration.";
             }
         }
     }
@@ -42,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $email = trim($_POST['email'] ?? '');
         $pwd = $_POST['password'] ?? '';
 
-        if (empty($email)) $errors['email'] = "Email requis";
-        if (empty($pwd)) $errors['password'] = "Mot de passe requis";
+        if (empty($email)) $errors['email'] = "Email required";
+        if (empty($pwd)) $errors['password'] = "Password required";
 
         if (empty($errors)) {
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if ($user && password_verify($pwd, $user['password'])) {
                 if (!$user['is_verified']) {
-                    $errors['global'] = "Votre compte n'est pas validé. Vérifiez vos emails.";
+                    $errors['global'] = "Your account is not validated. Check your email.";
                 } else {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['username'];
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     exit;
                 }
             } else {
-                $errors['global'] = "Identifiants incorrects";
+                $errors['global'] = "Incorrect credentials";
             }
         }
     }
@@ -70,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color Slide - Authentication</title>
     <link rel="stylesheet" href="../css/styles.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

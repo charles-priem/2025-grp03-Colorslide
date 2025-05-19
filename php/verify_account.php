@@ -10,7 +10,7 @@ if ($email && $code) {
     $user = $stmt->fetch();
     if ($user) {
         $pdo->prepare("UPDATE users SET is_verified = 1, validation_code = NULL WHERE id = ?")->execute([$user['id']]);
-        echo "Votre compte a été validé. <a href='auth.php'>Connectez-vous</a>";
+        echo "Votre compte a été validé. <a href='../auth.php'>Connectez-vous</a>";
     } else {
         echo "Lien invalide ou déjà utilisé.";
     }
