@@ -11,6 +11,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+
 CREATE TABLE leaderboard (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pseudo VARCHAR(50),
@@ -18,6 +19,7 @@ CREATE TABLE leaderboard (
     level INT,
     date_enregistrement DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;

@@ -2,6 +2,7 @@
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+
 $host = 'localhost';
 $dbname = 'bddgrp03colorslide';
 $username = 'root';
@@ -36,6 +37,72 @@ try {
         // echo "<div><a href='play2.php?level=$prec'>Previous level</a> - <a href='play2.php?level=$niveau'>Current level</a> - <a href='play2.php?level=$suiv'>Next level</a></div>";
     ?>
     <style>
+
+        .hint-dropdown {
+            position: absolute;
+            top: 44px;
+            right:50%;
+            transform: translateX(50%);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 8px 0;
+            width: 127px;
+            z-index: 100;
+            display: none;
+            background-color:#0A1539
+        }
+
+      .hint-dropdown::after{
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #0A1539; /* Couleur du fond du dropdown */
+        width: 0;
+        height: 0;
+        z-index: 100;
+      }
+
+        .hint-dropdown::before{
+        content: '';
+        position: absolute;
+        top: -11px; /* 1px plus haut pour la bordure */
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 11px solid transparent;
+        border-right: 11px solid transparent;
+        border-bottom: 11px solid #ccc; /* Même couleur que la bordure du dropdown */
+        width: 0;
+        height: 0;
+        z-index: 99;
+        }
+        .hint-dropdown button {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            width:100%;
+            font-size: 1rem;
+            border-radius: 0px;
+
+            
+            /* background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%); */
+            color: #fff;
+            border: none;
+            font-family: 'Space Grotesk', Arial, sans-serif;
+            cursor: pointer;
+            z-index: 1;
+            overflow: hidden;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+            letter-spacing: 0.5px;
+            background-color: #0A1539
+        }
+        .hint-dropdown button:hover {
+            background:rgb(0, 16, 49);
+        }
  
         h1 {
             color: #333;
@@ -241,7 +308,6 @@ try {
             font-weight: 700;
             cursor: pointer;
             z-index: 1;
-            /* box-shadow: 0 4px 24px 0 rgba(99,102,241,0.18), 0 1.5px 6px #06b6d4; */
             overflow: hidden;
             transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
             margin-top: 12px;
@@ -267,6 +333,16 @@ try {
             color: #FF6D1B;
             transform: scale(1.2);
         }
+        .hint-highlight {
+            animation: hint-pulse 1s infinite;
+            box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.7);
+        }
+
+        @keyframes hint-pulse {
+            0% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: inset 0 0 15px 4px rgba(255, 215, 0, 0.9); }
+            100% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
+        }
     </style>
 </head>
 <body>
@@ -290,10 +366,18 @@ try {
 
 
                     <div class="right-wrapper">
-                    <form method="POST" action="game/scripts/solveur.php">
-                        <input type="hidden" name="level_name" value="<?= $_GET["level"] ?? 1 ?>">
+                    <form method="POST" action="game/scripts/solveur.php" id="hint-form">
+                        <!-- <input type="hidden" name="level_name" value="<//?= $_GET["level"] ?? 1 ?>"> -->
                         <input type="hidden" name="current_state" id="currentState">
-                        <button type="submit"><img src="icons/point-dinterrogation.png" alt="Hint"></button>
+                        <input type="hidden" name="statesaved" id="statesaved">
+                        <input type="hidden" name="mode" id="hint-mode" value="">
+                        <button type="button" class="hint" id="hint-btn">
+                            <img src="icons/point-dinterrogation.png" alt="Hint">
+                        </button>
+                        <div class="hint-dropdown" id="hint-dropdown" style="display:none;">
+                        <button type="button" id="run-solution">Solution</button>
+                        <button type="button" id="hint-only-btn">Hint</button>
+                    </div>
                     </form>
 
                     <a>
@@ -306,14 +390,14 @@ try {
 
 
                 <?php
+                    if (isset($_SESSION["solution"])): ?>
+                        <script>
+                            sessionStorage.setItem("solution", "<?= htmlspecialchars($_SESSION["solution"]) ?>");
+                        </script>
+                    <?php 
                     unset($_SESSION["solution"]);
-                    // Récupérer l'état sauvegardé s'il existe
-                    $savedState = null;
-                    if (isset($_SESSION['current_state'])) {
-                        $savedState = json_decode($_SESSION['current_state'], true);
-                        unset($_SESSION['current_state']);
-                    }
-                ?>
+                    endif;
+                    ?>
             </div>
             <div class="dropdown" id="leaderboard">
                 <table><!--/td>
@@ -343,10 +427,10 @@ try {
             
         <?php
             $level = $_GET['level'] ?? 1;
-
+                    //modif bd
             if ($pdo) {
                 $stmt = $pdo->prepare("
-                    SELECT pseudo, mouvements
+                    SELECT pseudo, mouvements                   
                     FROM leaderboard
                     WHERE level = ?
                     ORDER BY mouvements ASC, date_enregistrement ASC
@@ -431,12 +515,31 @@ window.addEventListener('click', function (e) {
 
         let rows, cols, playerPos, playground;
         let originalPlayerPos, originalPlayground;
+        let hintTimeout = null;
+        let highlightedCells = [];
 
-        let gameEnded = false;
+        <?php
+            $savedState = null;
+            if (isset($_SESSION['current_state'])) {
+                $savedState = json_decode($_SESSION['current_state'], true);
+                unset($_SESSION['current_state']); // Nettoyer après utilisation
+            }
+            $savedplayerPos=null;
+            if (isset($_SESSION['savedplayerPos'])) {
+                $savedplayerPos = json_decode($_SESSION['savedplayerPos'], true);
+                unset($_SESSION['savedplayerPos']); // Nettoyer après utilisation
+            }
+            $mode=null;
+            if (isset($_SESSION['mode'])) {
+                $mode = json_decode($_SESSION['mode'], true);
+                unset($_SESSION['mode']); // Nettoyer après utilisation
+            }
+        ?>
 
-        const savedState = <?php echo (isset($savedState) && $savedState ? json_encode($savedState) : 'null'); ?>;
-        console.log("JS chargé", savedState);
-
+        const savedState = <?= $savedState ? json_encode($savedState) : 'null' ?>;
+        const savedplayerPos = <?= $savedplayerPos ? json_encode($savedplayerPos) : 'null' ?>;
+        const mode = <?= $mode ? json_encode($mode) : 'null' ?>;
+        
         async function loadLevel(level) {
             try {
                 const response = await fetch(`game/levels/${level}.json`);
@@ -453,7 +556,7 @@ window.addEventListener('click', function (e) {
             const rows = data[0];
             const cols = data[1];
             const playground = data.slice(2);
-            
+
             const playerIndex = playground.indexOf(PLAYER);
             const playerPos = {row: Math.floor(playerIndex / cols), col: playerIndex % cols};
             
@@ -484,6 +587,80 @@ window.addEventListener('click', function (e) {
             setTimeout(() => popup.style.display = 'none', 300);
         }
 
+        function showTip() {
+            const solution = sessionStorage.getItem("solution");
+            if (!solution || solution.length === 0 || solution === "No path found.") return;
+
+            // Annuler le clignotement précédent s'il existe
+            clearHint();
+
+            // Trouver la première direction de la solution
+            const firstMove = solution[0];
+            highlightedCells = [];
+
+            // Déterminer les cellules à mettre en surbrillance selon le premier mouvement
+            switch (firstMove) {
+                case 'N': // Nord - toute la colonne vers le haut jusqu'au premier mur
+                    for (let row = playerPos.row - 1; row >= 0; row--) {
+                        if (playground[row][playerPos.col] === WALL || playground[row][playerPos.col] === HOLE) break;
+                        highlightedCells.push({row: row, col: playerPos.col});
+                    }
+                    break;
+                case 'S': // Sud - toute la colonne vers le bas jusqu'au premier mur
+                    for (let row = playerPos.row + 1; row < rows; row++) {
+                        if (playground[row][playerPos.col] === WALL || playground[row][playerPos.col] === HOLE) break;
+                        highlightedCells.push({row: row, col: playerPos.col});
+                    }
+                    break;
+                case 'E': // Est - toute la ligne vers la droite jusqu'au premier mur
+                    for (let col = playerPos.col + 1; col < cols; col++) {
+                        if (playground[playerPos.row][col] === WALL || playground[playerPos.row][col] === HOLE) break;
+                        highlightedCells.push({row: playerPos.row, col: col});
+                    }
+                    break;
+                case 'O': // Ouest - toute la ligne vers la gauche jusqu'au premier mur
+                    for (let col = playerPos.col - 1; col >= 0; col--) {
+                        if (playground[playerPos.row][col] === WALL || playground[playerPos.row][col] === HOLE) break;
+                        highlightedCells.push({row: playerPos.row, col: col});
+                    }
+                    break;
+            }
+
+            // Filtrer seulement les cellules valides
+            highlightedCells = highlightedCells.filter(pos => 
+                pos.row >= 0 && pos.row < rows && 
+                pos.col >= 0 && pos.col < cols
+            );
+
+            // Ajouter la classe de clignotement
+            highlightedCells.forEach(pos => {
+                const cell = document.querySelector(`.cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                if (cell) {
+                    cell.classList.add('hint');
+                }
+            });
+            
+            // Configurer le timeout pour retirer le clignotement
+            hintTimeout = setTimeout(clearHint, 3000);
+        }
+
+        // Fonction pour effacer le clignotement
+        function clearHint() {
+            if (hintTimeout) {
+                clearTimeout(hintTimeout);
+                hintTimeout = null;
+            }
+            
+            highlightedCells.forEach(pos => {
+                const cell = document.querySelector(`.cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                if (cell) {
+                    cell.classList.remove('hint');
+                }
+            });
+            
+            highlightedCells = [];
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const grid = document.getElementById('grid');
             const newGameButton = document.getElementById('new-game');         
@@ -497,19 +674,20 @@ window.addEventListener('click', function (e) {
             if (savedState) {
                 // Décoder l'état sauvegardé comme un niveau normal
                 const savedLevelData = decodeJSON(savedState);
-                
+                if (savedplayerPos){
+                    savedLevelData.playerPos= {row:savedplayerPos[0], col:savedplayerPos[1]};
+                }
+
                 // Mettre à jour les références originales
                 rows = savedLevelData.rows;
                 cols = savedLevelData.cols;
 
-                originalPlayerPos = {...savedLevelData.playerPos}; // PROBLEME ICI
+                originalPlayerPos = {...savedLevelData.playerPos}; 
                 originalPlayground = JSON.parse(JSON.stringify(savedLevelData.playground));
                 
                 // Initialiser avec l'état sauvegardé
                 playerPos = {...originalPlayerPos};
                 playground = JSON.parse(JSON.stringify(originalPlayground));
-
-                console.log(playground);
                 
                 initGame();
             }
@@ -543,21 +721,21 @@ window.addEventListener('click', function (e) {
                 
                 // Mettre à jour la position du joueur dans le clone
                 clonedPlayground[originalPlayerPos.row][originalPlayerPos.col] = VISITED;
-                clonedPlayground[playerPos.row][playerPos.col] = PLAYER;
-                
+
                 // Aplatir le tableau 2D en 1D et ajouter rows/cols devant
                 const flatPlayground = clonedPlayground.flat();
                 const stateToSend = [rows, cols, ...flatPlayground];
+
+                document.getElementById('statesaved').value = JSON.stringify([playerPos.row, playerPos.col]);
                 
                 document.getElementById('currentState').value = JSON.stringify(stateToSend);
             });
 
-            document.getElementById('close-popup').onclick = closeWinPopup;
 
             function initGame() {
                 // Réinitialisation à l'état original
-                playerPos = {...originalPlayerPos};
-                playground = JSON.parse(JSON.stringify(originalPlayground));
+                // playerPos = {...originalPlayerPos};
+                // playground = JSON.parse(JSON.stringify(originalPlayground));
                 
 
                 if (animationFrameId) {
@@ -599,7 +777,7 @@ window.addEventListener('click', function (e) {
                         fill.className = 'fill';
                         cell.appendChild(fill);
 
-                        if (playground[row][col] === VISITED || (col === playerPos.col && row === playerPos.row)) {
+                        if (playground[row][col] === VISITED || (playground[row][col]===PATH && (col === playerPos.col && row === playerPos.row)) || playground[row][col]===PLAYER) {
                             cell.classList.add('visited');
                         }
 
@@ -778,10 +956,7 @@ window.addEventListener('click', function (e) {
             }
             
             function slide(direction) {
-                // Empêche de bouger si le popup de victoire est affiché
-                const popup = document.getElementById('win-popup');
-                if (popup.classList.contains('show')) return;
-
+                clearHint(); 
                 if (isMoving) return;
                 isMoving = true;
                 let fallen = false;
@@ -876,10 +1051,9 @@ window.addEventListener('click', function (e) {
                         else if (fallen) {
                             fallIntoHole(() => {
                                 isMoving = false;
-                                initGame();
-                                let moves = parseInt(sessionStorage.getItem("moves")) || 0;
-                                moves++;
-                                sessionStorage.setItem("moves", moves.toString());
+                                sessionStorage.setItem("moves", "0");
+                                const niveau = new URLSearchParams(window.location.search).get("level") ?? 1;
+                                document.location.href = `play2.php?level=${niveau}`;
                             });
                         } 
                         else {
@@ -905,19 +1079,22 @@ window.addEventListener('click', function (e) {
             function checkWin() {
                 let NotVisited = playground.some(l => l.some(n => n === PATH));
                 if (!NotVisited) setTimeout(() => {
-                    showWinPopup(sessionStorage.getItem("moves"));
+                    alert(`Félicitations ! Vous avez rempli toute la grille en  ${sessionStorage.getItem("moves")} mouvements !`);
                 }, 50);
             }
             
             newGameButton.addEventListener('click', () => {
                 sessionStorage.setItem("moves", "0");
                 const niveau = new URLSearchParams(window.location.search).get("level") ?? 1;
-                document.location.href = `play.php?level=${niveau}`;
-                initGame();
+                    document.location.href = `play.php?level=${niveau}`;
             });
 
+            if ((performance.navigation.type == performance.navigation.TYPE_RELOAD || performance.navigation.type == performance.navigation.TYPE_NAVIGATE) && !savedState) {
+                sessionStorage.setItem("moves", "0");
+            }
+
             document.addEventListener('keydown', (e) => {
-                if (isDropdownMenuOpen()) return;
+                if (isDropdownMenuOpen()) return; // <-- Ajout : bloque le jeu si menu ouvert
                 switch (e.key) {
                     case 'ArrowUp': slide('up'); break;
                     case 'ArrowDown': slide('down'); break;
@@ -925,7 +1102,158 @@ window.addEventListener('click', function (e) {
                     case 'ArrowRight': slide('right'); break;
                 }
             });
-        });
+
+            // Fonction pour exécuter la solution automatiquement
+            async function executeSolution(solution) {
+                for (const char of solution) {
+                    switch (char) {
+                        case 'N': await executeMove('up'); break;
+                        case 'E': await executeMove('right'); break;
+                        case 'S': await executeMove('down'); break;
+                        case 'O': await executeMove('left'); break;
+                    }
+                    await sleep(200); // Attendre un peu entre chaque mouvement
+                }
+            }
+
+            function executeMove(direction) {
+                return new Promise(resolve => {
+                    slide(direction);
+                    
+                    // Vérifier régulièrement si le mouvement est terminé
+                    const checkInterval = setInterval(() => {
+                        if (!isMoving) {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 50);
+                });
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // Configurer le bouton pour exécuter la solution
+            const runSolutionButton = document.getElementById('run-solution')
+            console.log(runSolutionButton);
+            if (runSolutionButton) {
+                runSolutionButton.addEventListener('click', () => {
+                    const solution = sessionStorage.getItem("solution");
+                    let NotVisited = playground.some(l => l.some(n => n === PATH));
+                    if (solution && NotVisited) {
+                        executeSolution(solution);
+                    }
+                });
+            }
+
+            // Configurer le bouton pour afficher un conseil
+            const tipsButton = document.getElementById('tips-giving');
+            if (tipsButton) {
+                tipsButton.addEventListener('click', showTip);
+            }
+
+            const hintBtn = document.getElementById('hint-btn');
+            const hintDropdown = document.getElementById('hint-dropdown');
+
+            hintBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hintDropdown.style.display = hintDropdown.style.display === "block" ? "none" : "block";
+            });
+
+            document.addEventListener('click', (e) => {
+                if (hintDropdown.style.display === "block" && !hintDropdown.contains(e.target) && e.target !== hintBtn) {
+                    hintDropdown.style.display = "none";
+                }
+            });
+            });
+
+            // Gestion du formulaire et des boutons
+            document.getElementById('hint-only-btn').addEventListener('click', function() {
+                prepareHintForm('hint');
+                document.getElementById('hint-form').submit();
+            });
+
+            document.getElementById('run-solution').addEventListener('click', function() {
+                prepareHintForm('solution');
+                document.getElementById('hint-form').submit();
+            });
+
+            function prepareHintForm(mode) {
+                // Clone profond du tableau 2D
+                const clonedPlayground = JSON.parse(JSON.stringify(playground));
+                
+                // Mettre à jour la position du joueur dans le clone
+                clonedPlayground[originalPlayerPos.row][originalPlayerPos.col] = VISITED;
+
+                // Aplatir le tableau 2D en 1D et ajouter rows/cols devant
+                const flatPlayground = clonedPlayground.flat();
+                const stateToSend = [rows, cols, ...flatPlayground];
+
+                document.getElementById('statesaved').value = JSON.stringify([playerPos.row, playerPos.col]);
+                document.getElementById('currentState').value = JSON.stringify(stateToSend);
+                document.getElementById('hint-mode').value = mode;
+            }
+
+            // Fonction pour afficher un indice visuel
+            function showVisualHint() {
+                const solution = sessionStorage.getItem("solution");
+                if (!solution || solution === "No path found.") return;
+
+                clearHint();
+
+                // Trouver le prochain mouvement possible
+                const nextMove = solution[0];
+                const directions = {
+                    'N': { row: -1, col: 0 },
+                    'S': { row: 1, col: 0 },
+                    'E': { row: 0, col: 1 },
+                    'O': { row: 0, col: -1 }
+                };
+
+                const direction = directions[nextMove];
+                let currentRow = playerPos.row;
+                let currentCol = playerPos.col;
+
+                // Marquer les cellules dans la direction du mouvement
+                while (true) {
+                    currentRow += direction.row;
+                    currentCol += direction.col;
+
+                    if (currentRow < 0 || currentRow >= rows || 
+                        currentCol < 0 || currentCol >= cols || 
+                        playground[currentRow][currentCol] === WALL || 
+                        playground[currentRow][currentCol] === HOLE) {
+                        break;
+                    }
+
+                    highlightedCells.push({ row: currentRow, col: currentCol });
+                    const cell = document.querySelector(`.cell[data-row="${currentRow}"][data-col="${currentCol}"]`);
+                    if (cell) {
+                        cell.classList.add('hint-highlight');
+                    }
+                }
+
+                // Configurer le timeout pour retirer le surlignage
+                hintTimeout = setTimeout(clearHint, 3000);
+            }
+
+            // Fonction pour effacer l'indice visuel
+            function clearHint() {
+                if (hintTimeout) {
+                    clearTimeout(hintTimeout);
+                    hintTimeout = null;
+                }
+                
+                highlightedCells.forEach(pos => {
+                    const cell = document.querySelector(`.cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+                    if (cell) {
+                        cell.classList.remove('hint-highlight');
+                    }
+                });
+                
+                highlightedCells = [];
+            }
 
 </script>
     </main>

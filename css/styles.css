@@ -652,12 +652,8 @@ body.connexion h2, #contact form h2 {
 #play .game-wrapper{
   font-family:'Space Grotesk';
   text-align: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
-  width: fit-content;
-  height: fit-content;
-  max-width:100vw;
-  max-height: calc(100vh - 200px) !important;
 
   display: flex; /* Active Flexbox */
   justify-content: center; /* Centre horizontalement */
@@ -667,6 +663,7 @@ body.connexion h2, #contact form h2 {
 #play .right-wrapper form{
   display: flex;
   align-items: center;
+  position: relative;
 }
 #play .right-wrapper {
   display: flex;
@@ -689,12 +686,9 @@ body.connexion h2, #contact form h2 {
   height:29px !important;
 }
 
-
-
 #play .game-container #grid{
   aspect-ratio: 1/1 !important;
   width:auto;
-  height: min(60vh, 100vw, calc(100vh - 200px));
   max-height: 60vh;
   max-width: 100vw;
 }
@@ -706,10 +700,8 @@ body.connexion h2, #contact form h2 {
 
 #play .game-container {
   position: relative;
-  max-width: 100vw;
-  max-height: calc(100vh - 120px);
-  width: fit-content;
-  height: fit-content;
+  min-width: min(60vh, 100vw, calc(100vh - 200px) + 30px); ;
+  max-height: calc(60vh + 74px);
   border-radius: 6px;
   padding: 15px;
   box-sizing: border-box;
@@ -838,11 +830,6 @@ body.connexion h2, #contact form h2 {
 
 
 
-
-
-
-
-/*LA PARTIE DE MOI*/
 #contact {
   margin: 0;
   padding: 0 !important;
@@ -1026,23 +1013,23 @@ body.connexion h2, #contact form h2 {
 /* Leaderboard élégant, sans animation ni gradient sur le thead, et sans style pour les boutons supprimer */
 
 
-.dbleaderboard {
+#leaderboard-main .dbleaderboard {
   width: 100%;
   border-collapse: collapse;
   background: transparent;
-  border-radius: 12px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
 
-.dbleaderboard th, .dbleaderboard td {
+#leaderboard-main .dbleaderboard th, #leaderboard-main .dbleaderboard td {
   padding: 18px 14px;
   text-align: center;
   font-size: 1.08em;
 }
 
-.dbleaderboard th {
+#leaderboard-main .dbleaderboard th {
   color: #fff;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -1050,26 +1037,26 @@ body.connexion h2, #contact form h2 {
   background-color: #333c4b
 }
 
-.dbleaderboard tbody tr {
+#leaderboard-main .dbleaderboard tbody tr {
   transition: background 0.2s;
   background: rgba(255,255,255,0.01);
 }
 
-.dbleaderboard tbody tr:nth-child(even) {
+#leaderboard-main .dbleaderboard tbody tr:nth-child(even) {
   background: rgba(77, 138, 255, 0.07); /* var(--blue) */
 }
 
-.dbleaderboard tbody tr:hover {
+#leaderboard-main .dbleaderboard tbody tr:hover {
   background: rgb(5, 43, 77); /* var(--pink) */
 }
 
 
-.dbleaderboard td {
+#leaderboard-main .dbleaderboard td {
   color: var(--text-color, #ccc);
   border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 
-.dbleaderboard td a {
+#leaderboard-main .dbleaderboard td a {
   color: var(--red, #FF6565);
   text-decoration: none;
   font-weight: 600;
@@ -1079,19 +1066,16 @@ body.connexion h2, #contact form h2 {
   transition: background 0.2s, color 0.2s;
 }
 
-.dbleaderboard td a:hover {
+#leaderboard-main .dbleaderboard td a:hover {
   background: var(--red, #FF6565);
   color: #fff;
   text-decoration: underline;
 }
 
 @media (max-width: 600px) {
-  .dbleaderboard-container {
-      padding: 10px 2px;
-      
-    }
+
     
-  .dbleaderboard th, .dbleaderboard td {
+  #leaderboard-main .dbleaderboard th, #leaderboard-main .dbleaderboard td {
       padding: 10px 6px;
       font-size: 0.97em;
   }
@@ -1266,6 +1250,35 @@ body.connexion h2, #contact form h2 {
   text-align: center;
 }
 
+.dashboard-box .profile-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.2em;
+  gap: 1em;
+  font-size: 1.08em;
+  background: none;
+}
+.dashboard-box .profile-label {
+  min-width: 140px;
+  font-weight: 600;
+  color: var(--blue);
+};
+
+.edit-btn, .save-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  margin-left: 8px;
+  color: var(--blue, #4d8aff);
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+.edit-btn:hover, .save-btn:hover {
+  color: var(--green, #4caf50);
+}
+
+
 
 .ChangeProfilePicture{
   text-align:center; 
@@ -1287,14 +1300,16 @@ body.connexion h2, #contact form h2 {
   margin-top:1em;
 }
 
-.dbleaderboard-gradient-wrapper {
+#leaderboard-main .dbleaderboard-gradient-wrapper {
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   max-width: 800px;
-  margin: 60px auto 40px auto;
+  max-height: calc(100vh - 200px);
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 1;
   border-radius: 18px;
   /* Bordure RGB animée */
@@ -1308,12 +1323,16 @@ body.connexion h2, #contact form h2 {
   box-sizing: border-box;
 }
 
-.dbleaderboard-container {
+#leaderboard-main .dbleaderboard-gradient-wrapper::-webkit-scrollbar {
+  width: 0px;
+}
+
+#leaderboard-main .dbleaderboard-container {
   position: relative;
   z-index: 2;
   background: var(--card-background, #1c1f2b);
-  border-radius: 14px;
-  padding: 32px 24px;
+  border-radius: 18px;
+  padding: 24px;
   width: 100%;
   max-width: 800px;
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18);
@@ -1325,8 +1344,8 @@ body.connexion h2, #contact form h2 {
 }
 
 /* HALO animé autour du leaderboard */
-.dbleaderboard-gradient-wrapper::before,
-.dbleaderboard-gradient-wrapper::after {
+#leaderboard-main .dbleaderboard-gradient-wrapper::before,
+#leaderboard-main .dbleaderboard-gradient-wrapper::after {
   z-index: -1;
   content: '';
   position: absolute;
@@ -1343,35 +1362,19 @@ body.connexion h2, #contact form h2 {
   pointer-events: none;
 }
 
-.dbleaderboard-gradient-wrapper::before {
+#leaderboard-main .dbleaderboard-gradient-wrapper::before {
   filter: blur(1.2rem);
   opacity: 0.45;
 }
 
-.dbleaderboard-gradient-wrapper::after {
+#leaderboard-main .dbleaderboard-gradient-wrapper::after {
   filter: blur(2rem);
   opacity: 0.18;
 }
 
 /* Responsive */
 @media (max-width: 900px) {
-  .dbleaderboard-gradient-wrapper,
-  .dbleaderboard-container {
-    max-width: 98vw;
-    width: 98vw;
-    padding: 0;
-  }
-  .dbleaderboard-gradient-wrapper::before,
-  .dbleaderboard-gradient-wrapper::after {
-    padding: 3px;
-    border-radius: 14px;
-  }
-  .dbleaderboard-gradient-wrapper::before {
-    filter: blur(0.7rem);
-  }
-  .dbleaderboard-gradient-wrapper::after {
-    filter: blur(1.1rem);
-  }
+
 }
 
 #leaderboard-main {
@@ -1466,7 +1469,7 @@ body.connexion h2, #contact form h2 {
   }
 }
 
-.dbleaderboard .my-score:first-child{
+#leaderboard-main .dbleaderboard .my-score:first-child{
   color: #232946 !important;
   font-weight: bold;
   box-shadow: 0 2px 8px rgba(238,187,195,0.15);
@@ -1474,6 +1477,6 @@ body.connexion h2, #contact form h2 {
   border-bottom: white 2px solid;
 }
 
-.dbleaderboard .my-score td {
+#leaderboard-main .dbleaderboard .my-score td {
   background-color:rgb(82, 92, 207);
 }
