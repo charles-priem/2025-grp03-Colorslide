@@ -1,3 +1,26 @@
+<?php
+
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+$host = 'localhost';
+$dbname = 'bddgrp03colorslide';
+$username = 'root';
+$password = 'root';
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    $pdo = null; // Ne bloque pas la page si la base est KO
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,20 +43,15 @@
         }
 
         .game-container {
-            position: relative;
             background-color:white;
-            border-radius: 6px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 15px;
-            box-sizing: border-box;
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             grid-template-rows: repeat(10, 1fr);
-            width: 100%;
-            height: 100%;
         }
 
         .cell {
@@ -256,7 +274,7 @@
     🏆
     </div>
     <header>
-        <?php include 'php/header1.php'; ?>
+        <?php include 'php/header1.php'; ?> 
     </header>
     <main id="play">
         <div class="game-wrapper">
@@ -298,7 +316,7 @@
                 ?>
             </div>
             <div class="dropdown" id="leaderboard">
-                <table>/td>
+                <table><!--/td>
                             <td>100</td>
                         </tr>
                         <tr>
@@ -317,12 +335,47 @@
                             <td>85</td>
                         </tr>
 
-                    </tbody>
-                </table>
-            </div>
+                    </tbody>-->
+                    <thead>
+            <tr><th>#</th><th>Nom</th><th>Score</th></tr>
+        </thead>
+        <tbody>
+            
+        <?php
+            $level = $_GET['level'] ?? 1;
+
+            if ($pdo) {
+                $stmt = $pdo->prepare("
+                    SELECT pseudo, mouvements
+                    FROM leaderboard
+                    WHERE level = ?
+                    ORDER BY mouvements ASC, date_enregistrement ASC
+                    LIMIT 10
+                ");
+                $stmt->execute([$level]);
+                $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $rank = 1;
+                foreach ($results as $row) {
+                    $isCurrentUser = isset($_SESSION['username']) && $_SESSION['username'] === $row['pseudo'];
+                    echo "<tr" . ($isCurrentUser ? " class='highlight'" : "") . ">";
+                    echo "<td>{$rank}</td>";
+                    echo "<td>{$row['pseudo']}</td>";
+                    echo "<td>{$row['mouvements']}</td>";
+                    echo "</tr>";
+                    $rank++;
+                }
+            } else {
+                echo "<tr><td colspan='3'>Base de données indisponible</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
             
         
 </div>
+
 
 <!-- Popup de victoire -->
 <div id="win-popup" class="popup" style="display:none;">
@@ -336,6 +389,7 @@
 
         
 <script>
+
 
 function toggleDropdown() {
     const menuIcon = document.querySelector('.menu-icon');
@@ -380,7 +434,8 @@ window.addEventListener('click', function (e) {
 
         let gameEnded = false;
 
-        const savedState = <?= $savedState ? json_encode($savedState) : 'null' ?>;
+        const savedState = <?php echo (isset($savedState) && $savedState ? json_encode($savedState) : 'null'); ?>;
+        console.log("JS chargé", savedState);
 
         async function loadLevel(level) {
             try {

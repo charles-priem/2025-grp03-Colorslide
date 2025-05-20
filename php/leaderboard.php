@@ -8,6 +8,7 @@ session_start();
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    //évite les erreurs silencieuses
 } catch (PDOException $e) {
     die("Erreur de connexion à la base : " . $e->getMessage());
 }
@@ -34,9 +35,9 @@ try {
                 // Requête SQL pour récupérer tout le leaderboard
                 $sql = "SELECT 
                             u.id,
-                            u.username, 
+                            u.username, /*On récupère l’id et le username des utilisateurs depuis la table users (alias u).*/
                             COUNT(s.id) AS levels_completed, 
-                            SUM(s.moves) AS total_moves, 
+                            SUM(s.moves) AS total_moves, /*On additionne tous les coups joués par chaque utilisateur*/
                             MIN(s.date) AS first_record_date
                         FROM users u
                         JOIN stats s ON s.user_id = u.id

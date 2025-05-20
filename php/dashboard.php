@@ -91,61 +91,43 @@ try {
 <main id="Dashboard">
     <section>
       <div class="dashboard-box" id="Profile">
-            <form method="POST" enctype="multipart/form-data">
-                <h2>My Profile</h2>
-                <div class="profile-photo" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;">
-                    <?php
-                    if (!empty($user['avatar'])) {
-                        $photo = 'data:image/jpeg;base64,' . base64_encode($user['avatar']);
-                    } else {
-                        $photo = '../images/png-clipart-user-profile-computer-icons-login-user-avatars-monochrome-black.png';
-                    }
-                    ?>
-                    <label for="avatar-upload" style="cursor:pointer;">
-                        <img src="<?php echo htmlspecialchars($photo); ?>"
-                             alt="Profile picture"
-                             style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: none;">
-                        <div class="ChangeProfilePicture">Change profile picture</div>
-                    </label>
-                    <input id="avatar-upload" type="file" name="avatar" accept="image/*" style="display:none;">
+            <div id="profile-view">
+                <div class="profile-photo">
+                    <img src="<?php echo htmlspecialchars($photo); ?>"
+                         alt="Profile picture"
+                         class="dashboard-avatar-img">
                 </div>
-
-                <?php if ($success): ?>
-                    <p class="success"><?= htmlspecialchars($success) ?></p>
-                <?php elseif ($error): ?>
-                    <p class="error"><?= htmlspecialchars($error) ?></p>
-                <?php endif; ?>
-
-                <div class="input-box">
-                    <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>" required>
-                    <label>Username</label>
+                <div class="profile-field">
+                    <span class="profile-label">Nom d'utilisateur :</span>
+                    <span id="username-value"><?= htmlspecialchars($user['username'] ?? '') ?></span>
+                    <button class="edit-field-btn" data-field="username" type="button">Modifier</button>
+                    <input class="edit-field-input" id="username-input" type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>" style="display:none;">
                 </div>
-
-                <div class="input-box">
-                    <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
-                    <label>Email</label>
+                <div class="profile-field">
+                    <span class="profile-label">Email :</span>
+                    <span id="email-value"><?= htmlspecialchars($user['email'] ?? '') ?></span>
+                    <button class="edit-field-btn" data-field="email" type="button">Modifier</button>
+                    <input class="edit-field-input" id="email-input" type="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" style="display:none;">
                 </div>
-
-                <div class="input-box">
-                    <input type="password" name="password">
-                    <label>New password (leave blank to keep current)</label>
+                <div class="profile-field">
+                    <span class="profile-label">Mot de passe :</span>
+                    <span>********</span>
+                    <button class="edit-field-btn" data-field="password" type="button">Modifier</button>
+                    <input class="edit-field-input" id="password-input" type="password" placeholder="Nouveau mot de passe" style="display:none;">
                 </div>
-
-                <button type="submit">Save</button>
-            </form>
-
-            <?php if (!empty($user['avatar'])): ?>
-                <form action="delete_photo.php" method="POST" style="margin-top: 10px;">
-                    <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user['id']); ?>">
-                    <button type="submit" name="delete_photo" >
-                        Delete profile picture
-                    </button>
+                <div class="profile-field">
+                    <span class="profile-label">Photo :</span>
+                    <button class="edit-field-btn" data-field="avatar" type="button">Changer</button>
+                    <input class="edit-field-input" id="avatar-input" type="file" name="avatar" accept="image/*" style="display:none;">
+                </div>
+                <div id="profile-actions" style="display:none;">
+                    <button id="save-profile-btn" type="button">Enregistrer</button>
+                    <button id="cancel-profile-btn" type="button">Annuler</button>
+                </div>
+                <form method="post" action="logout.php" style="margin-top:10px;">
+                    <button type="submit">Déconnexion</button>
                 </form>
-            <?php endif; ?>
-
-            <form method="post" action="logout.php" style="margin-top:10px;">
-                <button type="submit">Logout</button>
-            </form>
+            </div>
         </div>
     </section>
 </main>
@@ -160,5 +142,36 @@ try {
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="../script.js"></script>
+<script>
+const fields = ['username', 'email', 'password', 'avatar'];
+let editing = false;
+
+document.querySelectorAll('.edit-field-btn').forEach(btn => {
+    btn.onclick = function() {
+        const field = btn.dataset.field;
+        document.getElementById(field + '-value')?.style.display = 'none';
+        btn.style.display = 'none';
+        document.getElementById(field + '-input').style.display = 'inline-block';
+        document.getElementById('profile-actions').style.display = 'flex';
+        editing = true;
+    };
+});
+
+document.getElementById('cancel-profile-btn').onclick = function() {
+    fields.forEach(field => {
+        document.getElementById(field + '-input').style.display = 'none';
+        document.getElementById(field + '-value')?.style.display = '';
+        document.querySelector('.edit-field-btn[data-field="'+field+'"]').style.display = '';
+    });
+    document.getElementById('profile-actions').style.display = 'none';
+    editing = false;
+};
+
+// Pour la démo, tu peux ajouter la logique d'envoi AJAX ici ou faire un submit classique
+document.getElementById('save-profile-btn').onclick = function() {
+    // Tu peux ici faire un submit AJAX ou afficher le formulaire d'édition complet
+    document.getElementById('profile-edit-form').submit();
+};
+</script>
 </body>
 </html>
