@@ -2,22 +2,8 @@
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+require_once("php/db.php");
 
-$host = 'localhost';
-$dbname = 'bddgrp03colorslide';
-$username = 'root';
-$password = 'root';
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    $pdo = null; // Ne bloque pas la page si la base est KO
-}
 ?>
 
 
@@ -338,14 +324,123 @@ try {
             box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.7);
         }
 
-        @keyframes hint-pulse {
-            0% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: inset 0 0 15px 4px rgba(255, 215, 0, 0.9); }
-            100% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
+        .sound-dropdown {
+            position: absolute;
+            top: 44px;
+            right:50%;
+            transform: translateX(50%);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            height: 160px;
+            width: 60px;
+            z-index: 100;
+            display: flex;
+            background-color:#0A1539;
+            text-align: center;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
+
+.sound-dropdown::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #0A1539;
+    width: 0;
+    height: 0;
+    z-index: 100;
+}
+
+.sound-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-bottom: 11px solid #ccc;
+    width: 0;
+    height: 0;
+    z-index: 99;
+}
+
+.sound-control {
+    position: relative;
+}
+
+.volume-slider {
+    position:absolute;
+    top:74px;
+    left:50%;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 120px; /* Sera la hauteur après rotation */
+    height: 5px; /* Sera la largeur après rotation */
+    margin: auto;
+    background: transparent; /* Important - transparent pour éviter les conflits */
+    outline: none;
+    transform: translateX(-50%) rotate(270deg);
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background: #6366f1;
+    cursor: pointer;
+    margin-top: -5px; /* Centrer le thumb sur la track */
+}
+
+.volume-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background: linear-gradient(to right, #6366f1 var(--volume-percent, 50%), #444 var(--volume-percent, 50%));
+    border-radius: 5px;
+}
+
+.volume-slider::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background: #444;
+    border-radius: 5px;
+}
+
+.volume-slider::-moz-range-progress {
+    background-color: #6366f1;
+    height: 5px;
+
+    border-radius: 5px;
+}
+
+.volume-value {
+    display: block;
+    color: white;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+@keyframes hint-pulse {
+    0% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: inset 0 0 15px 4px rgba(255, 215, 0, 0.9); }
+    100% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
+}
     </style>
 </head>
 <body>
+    <audio id="background-music" loop autoplay>
+        <source src="audio/sound.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="menu-icon" onclick="toggleDropdown()">
     🏆
     </div>
@@ -353,17 +448,37 @@ try {
         <?php include 'php/header1.php'; ?> 
     </header>
     <main id="play">
+        <a id="home-logo" style="position:relative; cursor:pointer;"></a>
+        <div id="level-table" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:white; z-index:999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:16px; box-shadow:0 2px 16px #0002; padding:40px;">
+        <h2 style="text-align:center; color:#0A1539;">Choisissez un niveau</h2>
+        <table style="margin:auto;">
+            <tr>
+            <?php for ($i=1; $i<=10; $i++): ?>
+                <td style="padding:20px;">
+                    <a href="play.php?level=<?= $i ?>" style="display:block; width:80px; height:80px; background:#0A1539; color:white; font-size:2rem; border-radius:12px; text-align:center; line-height:80px; text-decoration:none; transition:background 0.2s;">
+                        <?= $i ?>
+                    </a>
+                </td>
+                <?php if ($i % 5 == 0) echo '</tr><tr>'; ?>
+            <?php endfor; ?>
+            </tr>
+        </table>
+        <button id="close-level-table" style="margin-top:30px; padding:10px 30px; border-radius:8px; background:#0A1539; color:white; border:none; font-size:1.1rem; cursor:pointer;">Annuler</button>
+    </div>
+</div>
         <div class="game-wrapper">
             <div class="game-container">
                 <div class="controls">
                     <div class="left-wrapper">
+                   
                     <a>
                         <img src="icons/logo_home_blue.png" alt="Home">
                     </a>
                     <button id="new-game"><img src="icons/recharger.png" alt="Restart"></button>
                     </div>
                     <a href="/2025-grp03/index.php"><img class="logo" src="/2025-grp03/images/Logo.png" classe="logo"></a>
-
+    
 
                     <div class="right-wrapper">
                     <form method="POST" action="game/scripts/solveur.php" id="hint-form">
@@ -380,13 +495,21 @@ try {
                     </div>
                     </form>
 
-                    <a>
-                        <img class="parameters" src="icons/parametres.png" alt="Parameters">
-                    </a>
+                    <div class="sound-control">
+                        <button type="button" class="sound-btn" id="sound-btn">
+                            <img class="sound" src="icons/sound.png" alt="Sound">
+                        </button>
+                        <div class="sound-dropdown" id="sound-dropdown" style="display:none;">
+                                <input type="range" min="0" max="100" value="50" class="volume-slider" id="volume-slider">
+                        </div>
+                    </div>
+
                     </div>
 
                 </div>
-                <div id="grid" class="grid"></div>
+                <div id="grid" class="grid">
+                    
+                </div>
 
 
                 <?php
@@ -427,25 +550,18 @@ try {
             
         <?php
             $level = $_GET['level'] ?? 1;
-                    //modif bd
             if ($pdo) {
-                $stmt = $pdo->prepare("
-                    SELECT pseudo, mouvements                   
-                    FROM leaderboard
-                    WHERE level = ?
-                    ORDER BY mouvements ASC, date_enregistrement ASC
-                    LIMIT 10
-                ");
+                $stmt = $pdo->prepare("SELECT moves, users.username FROM stats JOIN users ON stats.user_id = users.id WHERE level_id = ? ORDER BY moves ASC");
                 $stmt->execute([$level]);
                 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 $rank = 1;
                 foreach ($results as $row) {
-                    $isCurrentUser = isset($_SESSION['username']) && $_SESSION['username'] === $row['pseudo'];
+                    $isCurrentUser = isset($_SESSION['username']) && $_SESSION['username'] === $row['username'];
                     echo "<tr" . ($isCurrentUser ? " class='highlight'" : "") . ">";
                     echo "<td>{$rank}</td>";
-                    echo "<td>{$row['pseudo']}</td>";
-                    echo "<td>{$row['mouvements']}</td>";
+                    echo "<td>{$row['username']}</td>"; 
+                    echo "<td>{$row['moves']}</td>";
                     echo "</tr>";
                     $rank++;
                 }
@@ -456,10 +572,26 @@ try {
         </tbody>
     </table>
 </div>
-            
-        
-</div>
+        </div>
 
+<!-- ce que je rajoute-->
+ <div id="level-menu" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; border-radius:16px; box-shadow:0 2px 16px #0002; padding:40px; z-index:10; min-width:350px;">
+    <h2 style="text-align:center; color:#0A1539;">Choisissez un niveau</h2>
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:30px;">
+        <button class="level-btn">1</button>
+        <button class="level-btn">2</button>
+        <button class="level-btn">3</button>
+        <button class="level-btn">4</button>
+        <button class="level-btn">5</button>
+        <button class="level-btn">6</button>
+        <button class="level-btn">7</button>
+        <button class="level-btn">8</button>
+        <button class="level-btn">9</button>
+        <button class="level-btn">10</button>
+    </div>
+    <button id="close-level-menu" style="margin-top:30px; padding:10px 30px; border-radius:8px; background:#0A1539; color:white; border:none; font-size:1.1rem; cursor:pointer;">Annuler</button>
+</div>
+<!-- fin de ce que je rajoute-->
 
 <!-- Popup de victoire -->
 <div id="win-popup" class="popup" style="display:none;">
@@ -715,22 +847,116 @@ window.addEventListener('click', function (e) {
                 });
             }
 
-            document.querySelector('form').addEventListener('submit', function(e) {
-                // Clone profond du tableau 2D
-                const clonedPlayground = JSON.parse(JSON.stringify(playground));
-                
-                // Mettre à jour la position du joueur dans le clone
-                clonedPlayground[originalPlayerPos.row][originalPlayerPos.col] = VISITED;
 
-                // Aplatir le tableau 2D en 1D et ajouter rows/cols devant
-                const flatPlayground = clonedPlayground.flat();
-                const stateToSend = [rows, cols, ...flatPlayground];
 
-                document.getElementById('statesaved').value = JSON.stringify([playerPos.row, playerPos.col]);
-                
-                document.getElementById('currentState').value = JSON.stringify(stateToSend);
+
+            const soundBtn = document.getElementById('sound-btn');
+            const soundIcon = soundBtn.querySelector('img');
+            const soundDropdown = document.getElementById('sound-dropdown');
+            const volumeSlider = document.getElementById('volume-slider');
+            let audioVolume = 0.5; // Valeur par défaut
+
+            const backgroundMusic = document.getElementById('background-music');
+
+            const savedVolume = localStorage.getItem('gameVolume');
+            if (savedVolume !== null) {
+                audioVolume = parseFloat(savedVolume);
+            }
+
+            // Lancer le son après la première interaction utilisateur
+            document.addEventListener('click', function initialPlay() {
+                backgroundMusic.play().catch(e => console.error("Erreur de lecture audio:", e));
+                document.removeEventListener('click', initialPlay); // Ne s'exécute qu'une fois
+            }, { once: true });
+
+            // Appliquez le volume sauvegardé immédiatement
+            if (backgroundMusic && savedVolume !== null) {
+                backgroundMusic.volume = parseFloat(savedVolume);
+            }
+
+            function updateSoundIcon(volume) {
+                if (volume === 0) {
+                    soundIcon.src = "icons/muted.png";
+                    soundIcon.alt = "Muted";
+                } else {
+                    soundIcon.src = "icons/sound.png";
+                    soundIcon.alt = "Sound";
+                }
+            }
+
+            // Initialisez le volume pour tous les éléments audio
+            function updateAllAudioElements() {
+                const audios = document.querySelectorAll('audio');
+                audios.forEach(audio => {
+                    audio.volume = audioVolume;
+                    audio.muted = (audioVolume === 0);
+                });
+            }
+
+            // Gestion du slider de volume
+            if (volumeSlider) {
+                volumeSlider.addEventListener('input', function() {
+                    const value = this.value;
+                    audioVolume = value / 100;
+                    
+                    this.style.setProperty('--volume-percent', `${value}%`);
+
+                    updateSoundIcon(audioVolume);
+                    // Mettre à jour le volume de tous les sons
+                    updateAllAudioElements();
+                    
+                    // Sauvegarder le réglage dans localStorage
+                    localStorage.setItem('gameVolume', audioVolume);
+                });
+
+                // Charger le volume sauvegardé
+                const savedVolume = localStorage.getItem('gameVolume');
+                if (savedVolume !== null) {
+                    audioVolume = parseFloat(savedVolume);
+                    volumeSlider.value = audioVolume * 100;
+                    volumeSlider.style.setProperty('--volume-percent', `${Math.round(audioVolume * 100)}%`);
+                    updateAllAudioElements();
+                }
+            }
+
+            // Afficher/masquer le menu du son
+            if (soundBtn) {
+                soundBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    soundDropdown.style.display = soundDropdown.style.display === "block" ? "none" : "block";
+                });
+            }
+
+            // Fermer le dropdown du son en cliquant ailleurs
+            document.addEventListener('click', (e) => {
+                if (soundDropdown && soundDropdown.style.display === "block" && 
+                    !soundDropdown.contains(e.target) && e.target !== soundBtn) {
+                    soundDropdown.style.display = "none";
+                }
             });
 
+            document.getElementById('hint-form').addEventListener('submit', function(e) {
+                e.preventDefault(); // Empêche l'envoi du formulaire
+
+                // Logique personnalisée avant l'envoi
+                console.log("Formulaire intercepté, envoi empêché.");
+
+                // Préparez les données du formulaire
+                prepareHintForm('solution');
+
+                // Si nécessaire, envoyez les données via fetch ou autre méthode
+                fetch(this.action, {
+                    method: this.method,
+                    body: new FormData(this)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Réponse du serveur :", data);
+                })
+                .catch(error => {
+                    console.error("Erreur lors de l'envoi :", error);
+                });
+            });
 
             function initGame() {
                 // Réinitialisation à l'état original
@@ -1138,12 +1364,11 @@ window.addEventListener('click', function (e) {
             const runSolutionButton = document.getElementById('run-solution')
             console.log(runSolutionButton);
             if (runSolutionButton) {
-                runSolutionButton.addEventListener('click', () => {
-                    const solution = sessionStorage.getItem("solution");
-                    let NotVisited = playground.some(l => l.some(n => n === PATH));
-                    if (solution && NotVisited) {
-                        executeSolution(solution);
-                    }
+                runSolutionButton.addEventListener('click', function(e) {
+                    e.preventDefault(); // Empêche le comportement par défaut
+                    prepareHintForm('solution'); // Prépare les données pour le formulaire
+                    // Soumettez le formulaire via JavaScript si nécessaire
+                    document.getElementById('hint-form').submit();
                 });
             }
 
@@ -1260,5 +1485,61 @@ window.addEventListener('click', function (e) {
     <footer>
         <?php include 'php/footer.php'; ?>
     </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const homeLogo = document.getElementById('home-logo');
+        const submenu = document.getElementById('level-submenu');
+        homeLogo.addEventListener('click', function(e) {
+            e.stopPropagation();
+            submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', function(e) {
+            if (submenu.style.display === 'block' && !homeLogo.contains(e.target)) {
+                submenu.style.display = 'none';
+            }
+        });
+        
+    });
+</script>
+
+
+<!--ce que je rajoute-->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const homeLogo = document.querySelector('.left-wrapper a img[alt="Home"]');
+    const gameWrapper = document.querySelector('.game-wrapper');
+    const levelMenu = document.getElementById('level-menu');
+    const closeBtn = document.getElementById('close-level-menu');
+
+    if (homeLogo) {
+        homeLogo.parentElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            gameWrapper.style.display = 'none';
+            levelMenu.style.display = 'block';
+        });
+    }
+
+    closeBtn.addEventListener('click', function() {
+        levelMenu.style.display = 'none';
+        gameWrapper.style.display = '';
+    });
+
+    // Optionnel : clique sur un niveau pour fermer le menu
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            levelMenu.style.display = 'none';
+            gameWrapper.style.display = '';
+            // Ici tu peux ajouter la logique pour charger le niveau si besoin
+        });
+    });
+});
+</script>
+
+
+<!-- fin de ce que je rajoute -->
+
+
+
 </body>
 </html>

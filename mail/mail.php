@@ -37,6 +37,13 @@ function sendValidationMail($to, $user_id, $code) {
         $mail->Password   = $_ENV['EMAIL_PASSWORD'];
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
         $mail->setFrom($_ENV['EMAIL_USERNAME'], 'Support');
         $mail->addAddress($to);
         $mail->isHTML(true);

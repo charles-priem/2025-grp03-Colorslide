@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 $success = '';
 $error = '';
 
-require_once 'db.php'; 
+require_once 'db.php';
 
 try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -23,8 +23,8 @@ try {
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
+        $username = $_POST['username'] ?? $user['username'];
+        $email = $_POST['email'] ?? $user['email'];
         $newPassword = $_POST['password'] ?? '';
         $password = $user['password']; // Par défaut, on garde l'ancien
 
@@ -78,7 +78,6 @@ try {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>Dashboard - Color Slide</title>
@@ -91,7 +90,7 @@ try {
 <main id="Dashboard">
     <section>
       <div class="dashboard-box" id="Profile">
-            <form method="POST" enctype="multipart/form-data">
+            <form id="profile-form" method="POST" enctype="multipart/form-data">
                 <h2>My Profile</h2>
                 <div class="profile-photo" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 18px;">
                     <?php
@@ -122,24 +121,25 @@ try {
                     <div id="username-inputbox" class="input-box" style="display:none;">
                         <input id="username-input" type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>">
                     </div>
-                    <button class="edit-btn" data-field="username" type="button">
-                        <ion-icon name="pencil-outline"></ion-icon>
-                    </button>
+                    <button class="modify-btn" data-field="username" type="button" title="Modifier">
+                        <span class="icon"><ion-icon name="pencil-outline"></ion-icon></span>
+                    </button>    
                     <button class="save-btn" data-field="username" type="button" style="display:none;">
-                        <ion-icon name="checkmark-outline"></ion-icon>
+                        <span class="icon"><ion-icon name="checkmark-outline"></ion-icon></span>
                     </button>
                 </div>
                 <div class="profile-field">
                     <span class="profile-label">Email :</span>
                     <span id="email-value"><?= htmlspecialchars($user['email'] ?? '') ?></span>
                     <div id="email-inputbox" class="input-box" style="display:none;">
+                        <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
                         <input id="email-input" type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>">
                     </div>
-                    <button class="edit-btn" data-field="email" type="button">
-                        <ion-icon name="pencil-outline"></ion-icon>
-                    </button>
+                    <button class="modify-btn" data-field="email" type="button" title="Modifier">
+                        <span class="icon"><ion-icon name="pencil-outline"></ion-icon></span>
+                    </button>                       
                     <button class="save-btn" data-field="email" type="button" style="display:none;">
-                        <ion-icon name="checkmark-outline"></ion-icon>
+                        <span class="icon"><ion-icon name="checkmark-outline"></ion-icon></span>
                     </button>
                 </div>
                 <div class="profile-field">
@@ -148,13 +148,15 @@ try {
                     <div id="password-inputbox" class="input-box" style="display:none;">
                         <input id="password-input" type="password" name="password" placeholder="Nouveau mot de passe">
                     </div>
-                    <button class="edit-btn" data-field="password" type="button">
-                        <ion-icon name="pencil-outline"></ion-icon>
-                    </button>
+                    <button class="modify-btn" data-field="password" type="button" title="Modifier">
+                        <span class="icon"><ion-icon name="pencil-outline"></ion-icon></span>
+                    </button>     
                     <button class="save-btn" data-field="password" type="button" style="display:none;">
-                        <ion-icon name="checkmark-outline"></ion-icon>
-                    </button>
+                        <span class="icon"><ion-icon name="checkmark-outline"></ion-icon></span>
+                    </button>        
                 </div>
+                <!-- Un bouton caché pour submit via JS -->
+                <button id="hidden-submit" type="submit" style="display:none;"></button>
             </form>
 
             <?php if (!empty($user['avatar'])): ?>
@@ -184,7 +186,7 @@ try {
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="../script.js"></script>
 <script>
-document.querySelectorAll('.edit-btn').forEach(btn => {
+document.querySelectorAll('.modify-btn').forEach(btn => {
     btn.onclick = function() {
         const field = btn.dataset.field;
         document.getElementById(field + '-value').style.display = 'none';
@@ -200,9 +202,15 @@ document.querySelectorAll('.save-btn').forEach(btn => {
         document.getElementById(field + '-value').style.display = '';
         document.getElementById(field + '-inputbox').style.display = 'none';
         btn.style.display = 'none';
-        document.querySelector('.edit-btn[data-field="'+field+'"]').style.display = 'inline-block';
-        btn.closest('form').submit();
+        document.querySelector('.modify-btn[data-field="'+field+'"]').style.display = 'inline-block';
+        // On submit le formulaire principal
+        btn.closest('form').querySelector('#hidden-submit').click();
     };
+});
+
+// Rafraîchit la page et met à jour la photo dès qu'un fichier est choisi
+document.getElementById('avatar-upload').addEventListener('change', function() {
+    document.getElementById('profile-form').submit();
 });
 </script>
 </body>

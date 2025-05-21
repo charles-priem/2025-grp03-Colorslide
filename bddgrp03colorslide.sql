@@ -1,25 +1,15 @@
--- phpMyAdmin SQL Dump
+  -- phpMyAdmin SQL Dump
 -- version 5.1.2
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : lun. 19 mai 2025 à 17:58
+-- Généré le : mer. 21 mai 2025 à 10:46
 -- Version du serveur : 5.7.24
 -- Version de PHP : 8.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-CREATE TABLE leaderboard (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    pseudo VARCHAR(50),
-    mouvements INT,
-    level INT,
-    date_enregistrement DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
