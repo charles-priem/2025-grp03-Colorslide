@@ -450,7 +450,7 @@ require_once("php/db.php");
 }
 
 #level-menu{
-    display:none;
+    /* display:flex; */
     position:absolute; 
     top:50%; left:50%; 
     transform:translate(-50%,-50%); 
@@ -464,6 +464,21 @@ require_once("php/db.php");
     align-items: center;
 }
 
+/* @keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95);}
+  to   { opacity: 1; transform: scale(1);}
+}
+@keyframes fadeOutScale {
+  from { opacity: 1; transform: scale(1);}
+  to   { opacity: 0; transform: scale(0.95);}
+}
+.menu-animate-in {
+  animation: fadeInScale 0.25s cubic-bezier(.4,2,.6,1) forwards;
+}
+.menu-animate-out {
+  animation: fadeOutScale 0.18s cubic-bezier(.4,2,.6,1) forwards;
+} */
+
 @keyframes hint-pulse {
     0% { box-shadow: inset 0 0 10px 2px rgba(255, 215, 0, 0.3); }
     50% { box-shadow: inset 0 0 15px 4px rgba(255, 215, 0, 0.9); }
@@ -472,24 +487,24 @@ require_once("php/db.php");
     </style>
 </head>
 <body>
+
     <audio id="background-music" loop autoplay>
         <source src="audio/sound.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="menu-icon" onclick="toggleDropdown()">
+    <div class="menu-icon" id="menu-icon-btn">
     🏆
     </div>
     <header>
         <?php include 'php/header1.php'; ?> 
     </header>
     <main id="play">
-        <a id="home-logo" style="position:relative; cursor:pointer;"></a>
         <div class="game-wrapper">
             <div class="game-container">
                 <div class="controls">
                     <div class="left-wrapper">
                    
-                    <a>
+                    <a id="home-logo">
                         <img src="icons/logo_home_blue.png" alt="Home">
                     </a>
                     <button id="new-game"><img src="icons/recharger.png" alt="Restart"></button>
@@ -528,7 +543,7 @@ require_once("php/db.php");
             </div>
 
                 <!-- ce que je rajoute-->
-                <div id="level-menu">
+                <div id="level-menu" style="display: none;">
                     <h2 style="text-align:center; color:#0A1539;">Choisissez un niveau</h2>
                     <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:30px;">
                         <button class="level-btn">1</button>
@@ -546,7 +561,7 @@ require_once("php/db.php");
                 </div>
         <!-- fin de ce que je rajoute-->
                     
-
+        
 
                 <?php
                     if (isset($_SESSION["solution"])): ?>
@@ -622,6 +637,7 @@ require_once("php/db.php");
         
 <script>
 
+        
     class DropdownMenu {
     static allMenus = []; // Liste de tous les menus pour la fermeture automatique
     
@@ -692,82 +708,139 @@ require_once("php/db.php");
 
     // Initialisation de tous les menus au chargement du document
     document.addEventListener('DOMContentLoaded', function() {
+
+    // 4. Gestion des boutons de niveau
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (levelMenu) levelMenu.style.display = 'none';
+            if (grid) grid.style.display = '';
+        });
+    });
+
+        // Fermer les menus en cliquant ailleurs
         document.addEventListener('click', (e) => {
-        // Ne pas fermer les menus si on clique sur un bouton qui ouvre un menu
-        if (e.target.closest('#sound-btn') || 
-            e.target.closest('#hint-btn') || 
-            e.target.closest('#home-logo')) {
-            return;
-        }
+            // Ne pas fermer les menus si on clique sur un bouton qui ouvre un menu
+            if (e.target.closest('#sound-btn') || 
+                e.target.closest('#hint-btn') || 
+                e.target.closest('#home-logo')) {
+                return;
+            }
+            
+            // Ne pas fermer un menu si on clique à l'intérieur de celui-ci
+            if (e.target.closest('#sound-dropdown') || 
+                e.target.closest('#hint-dropdown') || 
+                e.target.closest('#level-menu')) {
+                return;
+            }
+            
+            // Si on clique n'importe où ailleurs, fermer tous les menus
+            DropdownMenu.closeAll();
+        });
         
-        // Ne pas fermer un menu si on clique à l'intérieur de celui-ci
-        if (e.target.closest('#sound-dropdown') || 
-            e.target.closest('#hint-dropdown') || 
-            e.target.closest('#level-menu')) {
-            return;
-        }
-        
-        // Si on clique n'importe où ailleurs, fermer tous les menus
-        DropdownMenu.closeAll();
-    });
-    
-    
-    // Menu indice
-    new DropdownMenu({
-        buttonId: 'hint-btn',
-        menuId: 'hint-dropdown'
-    });
-    
-    // Menu niveaux (avec effet supplémentaire)
-    new DropdownMenu({
-        buttonId: 'home-logo',
-        menuId: 'level-menu',
-        display: 'block',
-        afterOpen: () => {
-            document.querySelector('.game-wrapper').style.display = 'none';
-        },
-        afterClose: () => {
-            document.querySelector('.game-wrapper').style.display = '';
-        }
-    });
-    
-    // Bouton pour fermer le menu des niveaux
-    document.getElementById('close-level-menu').addEventListener('click', () => {
-        const levelMenu = DropdownMenu.allMenus.find(m => m.menuId === 'level-menu');
-        if (levelMenu) levelMenu.close();
-    });
+        // Menu indice
+        const hintMenu = new DropdownMenu({
+            buttonId: 'hint-btn',
+            menuId: 'hint-dropdown'
+        });
+
+        // Menu leaderboard
+
+
+new DropdownMenu({
+    buttonId: 'menu-icon-btn',
+    menuId: 'leaderboard',
+    display: 'block',
+    afterOpen: () => {
+        // Ajouter .open AU BOUTON ET au menu
+        document.getElementById('menu-icon-btn').classList.add('open');
+        document.getElementById('leaderboard').classList.add('open');
+        // Forcer le repaint
+        void document.getElementById('leaderboard').offsetWidth;
+    },
+    afterClose: () => {
+        // Retirer .open DES DEUX éléments
+        document.getElementById('menu-icon-btn').classList.remove('open');
+        document.getElementById('leaderboard').classList.remove('open');
+    }
 });
 
-
-function toggleDropdown() {
-    const menuIcon = document.querySelector('.menu-icon');
-    const dropdown = document.getElementById('leaderboard');
-
-    // Ajoute ou supprime les classes "open" pour déclencher les transitions
-    if (dropdown.classList.contains('open')) {
-        dropdown.classList.remove('open'); // Ferme le menu
-        menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
-    } else {
-        dropdown.classList.add('open'); 
-        menuIcon.classList.add('open'); // Déplace l'icône vers la gauche
-
-    }
+const leaderboardMenu = DropdownMenu.allMenus.find(m => m.menuId === 'leaderboard');
+if (leaderboardMenu) {
+    leaderboardMenu.close = function() {
+        if (this.afterClose) this.afterClose();
+    };
+    
+    leaderboardMenu.isOpen = function() {
+        return document.getElementById('leaderboard').classList.contains('open');
+    };
 }
 
-// Ferme le menu si on clique en dehors
-window.addEventListener('click', function (e) {
-    const menuIcon = document.querySelector('.menu-icon');
-    const dropdown = document.getElementById('leaderboard');
+        /*/ Menu niveaux
+        const levelMenu = new DropdownMenu({
+            buttonId: 'home-logo',
+            menuId: 'level-menu',
+            display: 'flex',
+            afterOpen: () => {
+                document.querySelector('.game-wrapper').style.display = 'none';
+            },
+            afterClose: () => {
+                document.querySelector('.game-wrapper').style.display = '';
+            }
+        });*/
+        
+        // Bouton pour fermer le menu des niveaux
+        document.getElementById('close-level-menu').addEventListener('click', () => {
+            const levelMenu = DropdownMenu.allMenus.find(m => m.menuId === 'level-menu');
+            if (levelMenu) levelMenu.close();
+        });
 
-    if (!menuIcon.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove('open'); // Ferme le menu
-        menuIcon.classList.remove('open'); // Ramène l'icône à sa position initiale
-    }
-});
+        // Fix pour les boutons de niveau
+        document.querySelectorAll('.level-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                window.location.href = `play.php?level=${this.textContent.trim()}`;
+            });
+        });
 
+        // Configuration du volume et gestion audio
+        const volumeSlider = document.getElementById('volume-slider');
+        const backgroundMusic = document.getElementById('background-music');
+        
+        if (volumeSlider && backgroundMusic) {
+            // Charger le volume sauvegardé
+            const savedVolume = localStorage.getItem('gameVolume') || 0.5;
+            backgroundMusic.volume = savedVolume;
+            volumeSlider.value = savedVolume * 100;
+            volumeSlider.style.setProperty('--volume-percent', `${Math.round(savedVolume * 100)}%`);
+            
+            // Mettre à jour le volume en direct
+            volumeSlider.addEventListener('input', function() {
+                const value = this.value;
+                const audioVolume = value / 100;
+                
+                this.style.setProperty('--volume-percent', `${value}%`);
+                
+                // Mettre à jour le volume de tous les sons
+                const audios = document.querySelectorAll('audio');
+                audios.forEach(audio => {
+                    audio.volume = audioVolume;
+                });
+                
+                // Sauvegarder le réglage
+                localStorage.setItem('gameVolume', audioVolume);
+            });
+        }
 
+        // Fix pour le hint
+        document.getElementById('hint-only-btn').addEventListener('click', function() {
+            prepareHintForm('hint');
+            document.getElementById('hint-form').submit();
+        });
 
-// Script du jeu 
+        document.getElementById('run-solution').addEventListener('click', function() {
+            prepareHintForm('solution');
+            document.getElementById('hint-form').submit();
+        });
+    });
 
         const EMPTY = -1;
         const VISITED = 0;
@@ -934,6 +1007,7 @@ window.addEventListener('click', function (e) {
             let isMoving = false;
             let animationFrameId = null;
             let TPs = [];
+            let gameEnded = false; // Ajout pour détecter la fin du jeu
 
             if (savedState) {
                 // Décoder l'état sauvegardé comme un niveau normal
@@ -976,7 +1050,7 @@ window.addEventListener('click', function (e) {
                     }
                 }).catch(error => {
                     console.error("Error while loading:", error);
-                });as
+                });
             }
 
 
@@ -1477,7 +1551,7 @@ window.addEventListener('click', function (e) {
             }
 
             document.addEventListener('keydown', (e) => {
-                if (isDropdownMenuOpen()) return; // <-- Ajout : bloque le jeu si menu ouvert
+                if (isDropdownMenuOpen() || gameEnded) return; // <-- Ajout : bloque le jeu si menu ouvert
                 switch (e.key) {
                     case 'ArrowUp': slide('up'); break;
                     case 'ArrowDown': slide('down'); break;
@@ -1535,63 +1609,9 @@ window.addEventListener('click', function (e) {
                 tipsButton.addEventListener('click', showTip);
             }
 
-            // const hintBtn = document.getElementById('hint-btn');
-            // const hintDropdown = document.getElementById('hint-dropdown');
-
-            // hintBtn.addEventListener('click', (e) => {
-            //     e.stopPropagation();
-            //     hintDropdown.style.display = hintDropdown.style.display === "block" ? "none" : "block";
-            // });
-
-            // document.addEventListener('click', (e) => {
-            //     if (hintDropdown.style.display === "block" && !hintDropdown.contains(e.target) && e.target !== hintBtn) {
-            //         hintDropdown.style.display = "none";
-            //     }
-            // });
-
-            // toggle() {
-            //     const isOpen = this.isOpen();
-                
-            //     if (isOpen) {
-            //         this.close();
-            //     } else {
-            //         if (this.closeOthers) {
-            //             DropdownMenu.closeAll(this.menuId);
-            //         }
-            //         this.open();
-            //     }
-                
-            //     // Ajoutez cette ligne pour empêcher la propagation
-            //     event.stopPropagation();
-            // }
+        });
 
 
-            // /!\ CODE DE NATYS DEPLACE DANS LE DOMContentLoaded principal /!\
-
-            // const homeLogo = document.getElementById('home-logo');
-            // const submenu = document.getElementById('level-submenu');
-            // homeLogo.addEventListener('click', function(e) {
-            //     e.stopPropagation();
-            //     submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
-            // });
-            // document.addEventListener('click', function(e) {
-            //     if (submenu.style.display === 'block' && !homeLogo.contains(e.target)) {
-            //         submenu.style.display = 'none';
-            //     }
-            // });
-
-            });
-
-            // Gestion du formulaire et des boutons
-            // document.getElementById('hint-only-btn').addEventListener('click', function() {
-            //     prepareHintForm('hint');
-            //     document.getElementById('hint-form').submit();
-            // });
-
-            // document.getElementById('run-solution').addEventListener('click', function() {
-            //     prepareHintForm('solution');
-            //     document.getElementById('hint-form').submit();
-            // });
 
             function prepareHintForm(mode) {
                 // Clone profond du tableau 2D
@@ -1668,57 +1688,36 @@ window.addEventListener('click', function (e) {
                 
                 highlightedCells = [];
             }
+                // 1. Vérification des sélecteurs
+    const homeLogoLink = document.querySelector('.left-wrapper a');
+    const homeLogoImg = document.querySelector('.left-wrapper a img[alt="Home"]');
+    const grid = document.querySelector('.grid');
+    const levelMenu = document.getElementById('level-menu');
+    const closeBtn = document.getElementById('close-level-menu');
 
-</script>
-    </main>
-    <footer>
-        <?php include 'php/footer.php'; ?>
-    </footer>
+    
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // const homeLogo = document.getElementById('home-logo'); cfnjngjrgjh(egh)
-        // const submenu = document.getElementById('level-submenu');
-        // homeLogo.addEventListener('click', function(e) {
-        //     e.stopPropagation();
-        //     submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
-        // });
-        // document.addEventListener('click', function(e) {
-        //     if (submenu.style.display === 'block' && !homeLogo.contains(e.target)) {
-        //         submenu.style.display = 'none';
-        //     }
-        // });
+    console.log('Éléments trouvés:', {
+        homeLogoLink,
+        homeLogoImg, 
+        grid,
+        levelMenu,
+        closeBtn
+    });
 
-
-    // ce que je rajoute (Mirina)
-    // 1. Vérification des sélecteurs
-    // const homeLogoLink = document.querySelector('.left-wrapper a');
-    // const homeLogoImg = document.querySelector('.left-wrapper a img[alt="Home"]');
-    // const grid = document.querySelector('.grid');
-    // const levelMenu = document.getElementById('level-menu');
-    // const closeBtn = document.getElementById('close-level-menu');
-
-    // console.log('Éléments trouvés:', {
-    //     homeLogoLink,
-    //     homeLogoImg, 
-    //     grid,
-    //     levelMenu,
-    //     closeBtn
-    // });
-
-    // // 2. Gestion du clic sur le logo Home
-    // if (homeLogoLink) {
-    //     homeLogoLink.addEventListener('click', function(e) {
-    //         e.preventDefault();
-    //         console.log('Clic sur Home détecté');
+    // 2. Gestion du clic sur le logo Home
+    if (homeLogoLink) {
+        homeLogoLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Clic sur Home détecté');
             
-    //         if (grid) grid.style.display = 'none';
-    //         if (levelMenu) {
-    //             levelMenu.style.display = 'flex';
-    //             console.log('Style de level-menu:', levelMenu.style.display);
-    //         }
-    //     });
-    // }
+            if (grid) grid.style.display = 'none';
+            if (levelMenu) {
+                levelMenu.style.display = 'flex';
+                console.log('Style de level-menu:', levelMenu.style.display);
+            }
+        });
+    }
 
     // 3. Gestion du bouton Annuler
     if (closeBtn) {
@@ -1735,11 +1734,12 @@ window.addEventListener('click', function (e) {
             if (grid) grid.style.display = '';
         });
     });
-});
+
 </script>
-
-
-<!-- fin de ce que je rajoute -->
+    </main>
+    <footer>
+        <?php include 'php/footer.php'; ?>
+    </footer>
 
 
 
